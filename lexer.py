@@ -55,5 +55,3 @@ tokens = lex("""
 ~l~
 """)
 
-for t in tokens:
-    print(t)
