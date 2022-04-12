@@ -1,4 +1,6 @@
-class Scanner():
+
+class Scanner:
+
     filename = "example.md"
 
     def __init__(self, filepath):
@@ -10,7 +12,10 @@ class Scanner():
         text = file.read()
         file.close()
         return text
-
-
-
+      
+    def save(self, outputfile, output):
+        file = open(file=outputfile, mode='w')
+        file.write(output)
+        file.close()
+        return
 
