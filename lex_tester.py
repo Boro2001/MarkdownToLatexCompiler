@@ -1,6 +1,22 @@
 from lexer import Lexer
+import pytest
+
+class test:
+    def __init__(sef, input, left, middle, righ, leftovers):
+        lexer = Lexer
+        test1 = lexer.lex(lexer, input)
+        assert test1[0] == left
+        assert test1[1] == middle
+        assert test1[2] == righ
+        assert test1[3] == leftovers           
+
 
 lexer = Lexer
+
+
+test("fh**####fihauwhf+__*****", "\n", "fh**####fihauwhf+__*****", "\n", None)
+test("  raz dwa ## \n ##  se ", "\n", "raz dwa ##", "\n", "## se")
+
 print(lexer.lex(lexer, "fh**####fihauwhf+__*****"))
 print(lexer.lex(lexer, "  raz dwa ## \n ##  se "))
 print(lexer.lex(lexer, " ##  raz dwa ##  trzy  cztery "))
