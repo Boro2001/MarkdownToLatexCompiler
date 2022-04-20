@@ -1,66 +1,31 @@
-import lexer
+from lexer import Lexer
+from node import Node
 
 class Drzewo:
     def __init__(self):
         root = None
+        lexer = Lexer()
+        
 
     def build_tree(self, uncompiled_text):
         #TODO make function to build a tree
-        pass
-
-class Node:
-    childen = None
-    left = None
-    right = None
-    middle = None
-
-    def __init__(self, left, middle, right, children):
-        self.left = left
-        self.right = right
-        self.middle = middle
-        children = []
-
-    def fill_children(self):
-        #TODO make function to fill children
+        root = Node(None, uncompiled_text, None)
+        
+        
+        #root_data = lexer.lex(uncompiled_text)
+        #root = Node(root_data[0], root_data[1], root_data[2])
+        #root.fill_children(root_data[3])
+        
         pass
 
 
-class Lexer:
-    single_starting_tokens = ['#', '##', '###', '####','#####', '######', '---', '***', '>','+','-','*','']
-    double_tokens = ['**', '__', '*', '_']
 
-    def lex(self, str):
-        #TODO: debud this function
-        type_o_matching = None
-        left_token = None
-        nest_deep = 0
-        result = ''
-        expression = str.split()
-        print(expression)
 
-        for token in expression:
-            result = result + " " + token
-            if type_o_matching is None:
-                if token in self.single_starting_tokens:
-                    type_o_matching = 1
-                if token in self.double_tokens:
-                    left_token = token
-                    type_o_matching = 2
-                type_o_matching = 0
-            if type_o_matching == 0:
-                if token == '\n':
-                    print(result)
-            if type_o_matching == 1:
-                if token == '\n':
-                    print(result)
-            if type_o_matching == 2:
-                if token == left_token:
-                    print(result)
-
-        print(type_o_matching)
 
 lexer = Lexer()
-lexer.lex("# uhafiefuh ahw uiehiuhw i# #\n ## ")
+#print(lexer.lex("** uhafiefuh ahw uiehiuhw ** i# # \n ## "))
+tree = Drzewo()
+tree.build_tree("** uhafiefuh ahw uiehiuhw ** i# # \n ## ")
 
 
 

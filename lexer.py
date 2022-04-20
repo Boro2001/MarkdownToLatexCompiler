@@ -1,57 +1,89 @@
-# based on:
-# https://accu.org/journals/overload/26/145/balaam_2510/
 
-import re
+class Lexer:
+    single_starting_tokens = ['#', '##', '###', '####', '#####', '######', '---', '***', '>', '+', '-', '*']
+    double_tokens = ['**', '__', '*', '_']
 
+    def lex(self, input_expression):
+        # TODO: debug this function
+        type_o_matching = None
+        left_token = None
+        last_token = -1
+        result = ''
+        expression = input_expression.split(" ")
+        while ("" in expression):
+            expression.remove("")
+        #print(expression)
+        for i, token in enumerate(expression):
+            result = result + " " + token
 
-def lex(chars_iter):
-    chars = PeekableStream(chars_iter)
-    while chars.next is not None:
-        c = chars.move_next()
-        if c in " \n":
-            # Ignore white space
-            pass
-        elif c in "#*_~":
-            # Currently supports: heading, bold text, italic, crossed out text
-            yield "symbol", _scan(c, chars, '[#*_~]')
-        elif re.match("[_a-zA-Z0-9]", c):
-            # Normal text (with spaces)
-            yield "text", _scan(c, chars, "[_a-zA-Z0-9 ]")
+            if type_o_matching is None:
+                type_o_matching = 0
+                if token in self.single_starting_tokens:
+                    type_o_matching = 1
+                if token in self.double_tokens:
+                    left_token = token
+                    type_o_matching = 2
+                continue
+
+            if type_o_matching == 0:
+                if token == '\n':
+                    last_token = i
+                    # print(i)
+                    break
+
+            if type_o_matching == 1:
+                if token == '\n':
+                    last_token = i
+                    # print(i)
+                    break
+
+            if type_o_matching == 2:
+                if token == left_token:
+                    last_token = i
+                    break
+
+        result = result.split()
+        left_token, right_token, middle_string = None, None, None
+        # lewy token
+        if type_o_matching == 0:
+            left_token = '\n'
         else:
-            raise Exception(
-                "Unexpected character: '" + c + "'.")
+            left_token = result[0]
+        # prawy token
+        if type_o_matching == 0 or type_o_matching == 1:
+            right_token = '\n'
+        else:
+            right_token = left_token
+        # middle
+        if type_o_matching == 0:
+            middle_string = ' '.join(result[:])
+        if type_o_matching == 1:
+            middle_string = ' '.join(result[1:])
+        if type_o_matching == 2:
+            middle_string = ' '.join(result[1:-1])
+        # leftovers
+
+        leftover_string = None
+        leftover_string = expression[last_token+1:]
+        leftover_string = " ".join(leftover_string)
+
+        if last_token == len(expression)-1:
+            leftover_string = None
+        if last_token == -1:
+            leftover_string = None
+        return left_token, middle_string, right_token, leftover_string
 
 
-class PeekableStream:
-    def __init__(self, iterator):
-        self.iterator = iter(iterator)
-        self._fill()
-
-    def _fill(self):
-        try:
-            self.next = next(self.iterator)
-        except StopIteration:
-            self.next = None
-
-    def move_next(self):
-        ret = self.next
-        self._fill()
-        return ret
-
-
-def _scan(first_char, chars, allowed):
-    ret = first_char
-    p = chars.next
-    while p is not None and re.match(allowed, p):
-        ret += chars.move_next()
-        p = chars.next
-    return ret
-
-
-tokens = lex(""" 
-** lala **
-## sdad ola
-3kl
-~l~
-""")
-
+lexer = Lexer
+print(lexer.lex(lexer, "fh**####fihauwhf+__*****"))
+print(lexer.lex(lexer, "  raz dwa ## \n ##  se "))
+print(lexer.lex(lexer, " ##  raz dwa ##  trzy  cztery "))
+print(lexer.lex(lexer, " **  raz dwa ** trzy  cztery "))
+print(lexer.lex(lexer, " ### raz dwa \n "))
+print(lexer.lex(lexer, " ### raz dwa "))
+print(lexer.lex(lexer, "    awjij ai jwj iaj iw ### ** **  juish uhes uu \n  auh iauhw ihuiwhi"))
+print(lexer.lex(lexer, " __ jaoi jeioa j \n __ hello leftovers "))
+print(lexer.lex(lexer, " jaoijeioa __ hell leftovers "))
+print(lexer.lex(lexer, " ** __ jaoijeioa __ hell leftovers  a ** "))
+print(lexer.lex(lexer, " ** __ halla B00nger __ ** "))
+print(lexer.lex(lexer, " *** aij iah ehaehui \n\n\n\n\n\n.*####***  "))
