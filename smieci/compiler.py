@@ -1,4 +1,4 @@
-from lexer import lex
+from smieci.lexer import lex
 from scanner import Scanner
 
 

@@ -1,4 +1,4 @@
-from lexer import Lexer
+from smieci.lexer import Lexer
 class Node:
     childen = []
     left = None

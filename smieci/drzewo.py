@@ -1,5 +1,5 @@
-from lexer import Lexer
-from node import Node
+from smieci.lexer import Lexer
+from smieci.node import Node
 
 class Drzewo:
     def __init__(self):
