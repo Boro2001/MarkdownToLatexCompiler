@@ -63,23 +63,23 @@ t_ESCAPEDCHAR = r'\\'
 t_ALPHANUMERIC = r'[a-zA-Z0-9]'
 t_PUNCTUATION = r'[!"#$%&\'()*+,\-./:;<=>?@[\]^_{}]'
 t_ESCAPEDPIPE = r'\|'
-t_WS = r' \t'
+t_WS = r'\ '
 t_LISTNUMBER = r'[1-9][.)]'
 t_BULLET = r'[-+*]'
 t_INITIALPARACHAR = r'~[#>|\n\r]'
 t_LITERALCHAR = r'~[`]'
 t_LINECHAR = r'~[\n\r`]'
 t_CLOSE_FENCE = r'```(FENCED_NEWLINE|EOF)->mode(DEFAULT_MODE)'
-t_TEXTLINE = r'INITIALTEXTCHARTEXTCHAR*FENCED_NEWLINE'
-t_INITIALTEXTCHAR = r'~[\n\r]'
+t_TEXTLINE = r'INITIALTEXTCHAR TEXTCHAR*FENCED_NEWLINE'
+t_INITIALTEXTCHAR = r'{_input.LA(-1) == 10|_input.LA(-1) == 13}?~[\n\r]'
 t_LINENUMBER = r'DIGIT+'
 t_IMPORT = r'import'
 t_FROM = r'from'
-t_TO = r'to'
+t_TO = r'to|\-'
 t_STRING = r'\'LINECHAR*?\''
 t_WORD = r'WORDCHAR+'
 t_FENCED_NEWLINE = r'\r?\n'
-t_FENCED_IGNORE_WS = r'WS -> skip' #
+t_FENCED_IGNORE_WS = r'WS->skip' #
 t_DIGIT = r'[0-9]'
 t_WORDCHAR = r'~[\n\r\t |`]'
 t_TEXTCHAR = r'~[\n\r]'
@@ -96,12 +96,22 @@ def t_error(t):
 lexer = lex.lex()
 
 data = '''
+import
 + Create a list by starting a line with `+`, `-`, or `*`
 + Sub-lists are made by indenting 2 spaces:
   - Marker character change forces new list start:
     * Ac tristique libero volutpat at
       + Facilisis in pretium nisl aliquet
-      - Nulla vo
+      - Nulla v
+
+## Horizontal Rules
+
+___
+
+---
+
+***
+
 '''
 # Give the lexer some input
 lexer.input(data)
