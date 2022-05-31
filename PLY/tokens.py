@@ -1,14 +1,9 @@
 from matplotlib.ft2font import HORIZONTAL
 from ply import lex
 from ply import yacc
+from grammar import *
 
 tokens = (
-    'LITERAL',
-    'HEADINGLINE',
-    'QUOTELINE',
-    'LISTLINE',
-    'PARAGRAPHLINE',
-    'TABLEDELIMINATORCELL',
     'OPEN_FENCE',
     'NEWLINE',
     'CELLTEXT',
@@ -16,7 +11,6 @@ tokens = (
     'GT',
     'HASH',
     'PIPE',
-    'CELLCHAR',
     'ESCAPEDCHAR',
     'ALPHANUMERIC',
     'PUNCTUATION',
@@ -34,22 +28,23 @@ tokens = (
     'IMPORT',
     'FROM',
     'TO',
-    'STRING',
-    'WORD',
     'FENCED_NEWLINE',
     'FENCED_IGNORE_WS',
     'DIGIT',
     'WORDCHAR',
     'TEXTCHAR',
     'IGNORE_WS',
+    'EOF',
+    'QUOTE'
 )
 
-t_LITERAL = r'BACKTICK?LITERALCHAR+?BACKTICK'
-t_HEADINGLINE = r'HASH+?LINECHAR+'
-t_QUOTELINE = r'GT?(LINECHAR+|LITERAL)+'
-t_LISTLINE = r'WS*(BULLET|LISTNUMBER)WS+LINECHAR*'
-t_PARAGRAPHLINE = r'INITIALPARACHAR(LINECHAR+|LITERAL)*'
-t_TABLEDELIMINATORCELL = r'PIPE?:?-+:?'
+
+
+
+#t_QUOTELINE = r'GT?(LINECHAR+|LITERAL)+'
+#t_LISTLINE = r'WS*(BULLET|LISTNUMBER)WS+LINECHAR*'
+#t_PARAGRAPHLINE = r'INITIALPARACHAR(LINECHAR+|LITERAL)*'
+#t_TABLEDELIMINATORCELL = r'PIPE?:?-+:?'
 t_OPEN_FENCE = r'```->mode(FENCED)'#
 t_IGNORE_WS = r'WS->skip'#
 t_NEWLINE = r'\r?\n'
@@ -58,7 +53,7 @@ t_BACKTICK = r'`'
 t_GT = r'>'
 t_HASH = r'\#'
 t_PIPE = r'\|'
-t_CELLCHAR = r'(ESCAPEDCHAR|ESCAPEDPIPE|WS|ALPHANUMERIC|PUNCTUATION)'
+
 t_ESCAPEDCHAR = r'\\'
 t_ALPHANUMERIC = r'[a-zA-Z0-9]'
 t_PUNCTUATION = r'[!"#$%&\'()*+,\-./:;<=>?@[\]^_{}]'
@@ -76,13 +71,14 @@ t_LINENUMBER = r'DIGIT+'
 t_IMPORT = r'import'
 t_FROM = r'from'
 t_TO = r'to|\-'
-t_STRING = r'\'LINECHAR*?\''
-t_WORD = r'WORDCHAR+'
+t_QUOTE = r'\''
+
 t_FENCED_NEWLINE = r'\r?\n'
-t_FENCED_IGNORE_WS = r'WS->skip' #
+t_FENCED_IGNORE_WS = r'WS->skip'
 t_DIGIT = r'[0-9]'
 t_WORDCHAR = r'~[\n\r\t |`]'
 t_TEXTCHAR = r'~[\n\r]'
+t_EOF = r'EOF'
 
 
 def t_newline(t):
@@ -95,8 +91,10 @@ def t_error(t):
 
 lexer = lex.lex()
 
-data = '''
-import
+data = "#d\nEOF"
+
+
+'''
 + Create a list by starting a line with `+`, `-`, or `*`
 + Sub-lists are made by indenting 2 spaces:
   - Marker character change forces new list start:
@@ -115,10 +113,22 @@ ___
 '''
 # Give the lexer some input
 lexer.input(data)
+parser = yacc.yacc()
  
  # Tokenize
 while True:
     tok = lexer.token()
-    if not tok: 
+    if not tok:
         break      # No more input
     print(tok)
+
+
+
+while True:
+    try:
+        s = data
+    except EOFError:
+        break
+    if not s: continue
+    result = parser.parse(s)
+    print(result)
