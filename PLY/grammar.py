@@ -3,29 +3,30 @@ from ply import yacc
 
 
 def p_document(p):
-    "block+ EOF"
+    "document : block+ EOF"
+    p[0] = p[1]
 
 
 def p_block(p):
-     """heading |
+    """block : heading |
         paragraph |
         list |
         blockquote |
         fencedcodeblock |
         table |
         NEWLINE"""
-
+    p[0] = p[1]
 
 def p_heading(p):
-    "NEWLINE* HEADINGLINE NEWLINE"
-
+    "hediang : NEWLINE* HEADINGLINE NEWLINE"
+    p[0] = "{\huge" + p[1] + "}"
 
 def p_paragraph(p):
-    "NEWLINE* paragraphline+"
+    "paragraph : NEWLINE* paragraphline+"
 
 
 def p_paragraphline(p):
-    """PARAGRAPHLINE
+    """paragraph : PARAGRAPHLINE
     (
         NEWLINE |
         EOF
@@ -33,11 +34,11 @@ def p_paragraphline(p):
 
 
 def p_list(p):
-    "NEWLINE* listline+"
+    "list : NEWLINE* listline+"
 
 
 def p_listline(p):
-    """LISTLINE
+    """listline : LISTLINE
     (
         NEWLINE |
         EOF
@@ -45,11 +46,11 @@ def p_listline(p):
 
 
 def p_blockquote(p):
-    "NEWLINE* quoteline+"
+    "blockquote : NEWLINE* quoteline+"
 
 
 def p_quoteline(p):
-    """QUOTELINE
+    """quoteline : QUOTELINE
     (
         NEWLINE |
         EOF
@@ -57,49 +58,49 @@ def p_quoteline(p):
 
 
 def p_fencedcodeblock(p):
-    """OPEN_FENCT infostring? FENCRD_IGNORE_WS? importspec? FENCED_NEWLINE
+    """fencedcodeblock : OPEN_FENCT infostring? FENCRD_IGNORE_WS? importspec? FENCED_NEWLINE
     textline*
     CLOSE_FENCE"""
 
 
 def p_textline(p):
-    "TEXTLINE"
+    "textline : TEXTLINE"
 
 
 def p_infostring(p):
-    "WORD"
+    "infostring : WORD"
 
 
 def p_importspec(p):
-    "IMPORT FENCED_INGORE_WS? path FENCED_IGNORE_WS? (start FENCED_IGNORE_WS? end?)?"
+    "importspec : IMPORT FENCED_INGORE_WS? path FENCED_IGNORE_WS? (start FENCED_IGNORE_WS? end?)?"
 
 
 def p_path(p):
-    "WORD | STRING"
+    "path : WORD | STRING"
 
 
 def p_start(p):
-    "FROM? FENCED_IGNORE_WS? location"
+    "start : FROM? FENCED_IGNORE_WS? location"
 
 
 def p_end(p):
-    "TO FENCED_IGNORE_WS? location"
+    "end : TO FENCED_IGNORE_WS? location"
 
 
 def p_location(p):
-    "LINENUMBER | STRING"
+    "location : LINENUMBER | STRING"
 
 
 def p_table(p):
-    "NEWLINE* tableheading tabledelimiterrow tablerow+"
+    "table : NEWLINE* tableheading tabledelimiterrow tablerow+"
 
 
 def p_tableheading(p):
-    "tablerow"
+    "tableheading : tablerow"
 
 
 def p_tablerow(p):
-    """cell+ PIPE?
+    """tablerow : cell+ PIPE?
     (
         NEWLINNE |
         EOF
@@ -107,8 +108,8 @@ def p_tablerow(p):
 
 
 def p_cell(p):
-    "CELLTEXT"
+    "cell : CELLTEXT"
 
 
 def p_tabledelimiterrow(p):
-    "TABLEDELIMINATORCELL+ PIPE? NEWLINE"
+    "tabledelimiterrow : TABLEDELIMINATORCELL+ PIPE? NEWLINE"
