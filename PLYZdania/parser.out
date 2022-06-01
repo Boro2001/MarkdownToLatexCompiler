@@ -1,0 +1,118 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    COMMA
+
+Grammar
+
+Rule 0     S' -> document
+Rule 1     document -> sentence
+Rule 2     word -> ALPHANUMERIC
+Rule 3     word -> ALPHANUMERIC word
+Rule 4     sentence -> word NEWLINE
+Rule 5     sentence -> word SPACE sentence
+Rule 6     heading -> HEADING1 sentence
+
+Terminals, with rules where they appear
+
+ALPHANUMERIC         : 2 3
+COMMA                : 
+HEADING1             : 6
+NEWLINE              : 4
+SPACE                : 5
+error                : 
+
+Nonterminals, with rules where they appear
+
+document             : 0
+heading              : 
+sentence             : 1 5 6
+word                 : 3 4 5
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . document
+    (1) document -> . sentence
+    (4) sentence -> . word NEWLINE
+    (5) sentence -> . word SPACE sentence
+    (2) word -> . ALPHANUMERIC
+    (3) word -> . ALPHANUMERIC word
+
+    ALPHANUMERIC    shift and go to state 4
+
+    document                       shift and go to state 1
+    sentence                       shift and go to state 2
+    word                           shift and go to state 3
+
+state 1
+
+    (0) S' -> document .
+
+
+
+state 2
+
+    (1) document -> sentence .
+
+    $end            reduce using rule 1 (document -> sentence .)
+
+
+state 3
+
+    (4) sentence -> word . NEWLINE
+    (5) sentence -> word . SPACE sentence
+
+    NEWLINE         shift and go to state 5
+    SPACE           shift and go to state 6
+
+
+state 4
+
+    (2) word -> ALPHANUMERIC .
+    (3) word -> ALPHANUMERIC . word
+    (2) word -> . ALPHANUMERIC
+    (3) word -> . ALPHANUMERIC word
+
+    NEWLINE         reduce using rule 2 (word -> ALPHANUMERIC .)
+    SPACE           reduce using rule 2 (word -> ALPHANUMERIC .)
+    ALPHANUMERIC    shift and go to state 4
+
+    word                           shift and go to state 7
+
+state 5
+
+    (4) sentence -> word NEWLINE .
+
+    $end            reduce using rule 4 (sentence -> word NEWLINE .)
+
+
+state 6
+
+    (5) sentence -> word SPACE . sentence
+    (4) sentence -> . word NEWLINE
+    (5) sentence -> . word SPACE sentence
+    (2) word -> . ALPHANUMERIC
+    (3) word -> . ALPHANUMERIC word
+
+    ALPHANUMERIC    shift and go to state 4
+
+    word                           shift and go to state 3
+    sentence                       shift and go to state 8
+
+state 7
+
+    (3) word -> ALPHANUMERIC word .
+
+    NEWLINE         reduce using rule 3 (word -> ALPHANUMERIC word .)
+    SPACE           reduce using rule 3 (word -> ALPHANUMERIC word .)
+
+
+state 8
+
+    (5) sentence -> word SPACE sentence .
+
+    $end            reduce using rule 5 (sentence -> word SPACE sentence .)
+
