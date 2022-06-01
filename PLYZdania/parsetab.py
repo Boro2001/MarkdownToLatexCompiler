@@ -6,7 +6,7 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'ALPHANUMERIC COMMA HEADING1 NEWLINE SPACE\n    document : sentence\n    \n        word : ALPHANUMERIC\n            | ALPHANUMERIC word\n    \n    sentence : word NEWLINE\n    | word SPACE sentence\n\n    \n    heading : HEADING1 sentence\n    '
+_lr_signature = 'ALPHANUMERIC COMMA HEADING1 NEWLINE SPACE\n    document : sentence\n    \n        word : ALPHANUMERIC\n            | ALPHANUMERIC word\n    \n    sentence : word NEWLINE\n    | word SPACE sentence\n\n\n    \n    heading : HEADING1 sentence\n    '
     
 _lr_action_items = {'ALPHANUMERIC':([0,4,6,],[4,4,4,]),'$end':([1,2,5,8,],[0,-1,-4,-5,]),'NEWLINE':([3,4,7,],[5,-2,-3,]),'SPACE':([3,4,7,],[6,-2,-3,]),}
 
@@ -32,5 +32,5 @@ _lr_productions = [
   ('word -> ALPHANUMERIC word','word',2,'p_word','prototype.py',35),
   ('sentence -> word NEWLINE','sentence',2,'p_sentence','prototype.py',47),
   ('sentence -> word SPACE sentence','sentence',3,'p_sentence','prototype.py',48),
-  ('heading -> HEADING1 sentence','heading',2,'p_heading','prototype.py',60),
+  ('heading -> HEADING1 sentence','heading',2,'p_heading','prototype.py',61),
 ]

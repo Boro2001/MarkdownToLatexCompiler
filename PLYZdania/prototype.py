@@ -47,12 +47,13 @@ def p_sentence(p):
     sentence : word NEWLINE
     | word SPACE sentence
 
+
     """
 
     try:
-        p[0] = "word{" + p[1] + "}" + "word{" + p[3] + "}"
+        p[0] = "word{" + p[1] + "}" + p[3]
     except:
-        p[0] = p[1]
+        p[0] = "word{" + p[1] + "}"
 
 
 def p_heading(p):
