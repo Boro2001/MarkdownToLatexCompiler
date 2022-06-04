@@ -1,300 +1,113 @@
-from ply import lex
 from ply import yacc
+from ply import lex
 
 
+# TOKENS
+tokens = (
+    'NEWLINE', #\n
+    'BACKTICK', #` <- ten jest do kodu
+    'GT', #>
+    'HASH', #
+    'PIPE', #|
+    'SLASH', # \\
+    'ALPHANUMERIC', # a-zA-Z0-9
+    'PUNCTUATION', # ale nie moze byc # | > ` \ '
+    'WS', # whitespace
+    'BULLET', # * 
+    'LITERALCHAR' # ' <- ten jest do nawiasów
+
+)
+t_NEWLINE = r'\n'
+t_BACKTICK = r'`'
+t_GT = r'>'
+t_HASH = r'\#'
+t_PIPE = r'\|'
+t_SLASH = r'\\'
+t_ALPHANUMERIC = r'[a-zA-Z0-9]'
+t_PUNCTUATION = r'[!"$%&(),-./:;<=?@^_{}]'
+t_WS = r'\ '
+t_BULLET = r'\*'
+t_LITERALCHAR = r'\''
+# /TOKENS
+
+# GRAMMAR
 def p_document(p):
-    """document : block EOF
-                | document block EOF"""
-    p[0] = "\\begin{document}" + p[1]
-
+    """document : block
+                | block document"""
+    if len(p) == 2:
+        p[0] = "\\begin{document}" + p[1] + "\\end{document}"
+    elif len(p) == 3:
+        p[0] = "\\begin{document}" + p[1] + p[2][17:-15] + "\\end{document}"
+    else:
+        print("Document wrong argument lenght")
 
 def p_block(p):
-    """block : heading
-    | paragraph
-    | list
-    | blockquote
-    | fencedcodeblock
-    | table
-    | NEWLINE"""
+    """
+    block : heading
+    | quote
+    | bulletitem
+    """
     p[0] = p[1]
-
 
 def p_heading(p):
-    #NEWLINE* HEADINGLINE NEWLINE
-    """heading : HEADINGLINE NEWLINE
-        | NEWLINE HEADINGLINE NEWLINE """
-    p[0] = "{\huge" + p[1] + "}"
-
-
-def p_paragraph(p):
-    #NEWLINE* paragraphline+
-    """paragraph : paragraphline
-        | NEWLINE paragraphline"""
-    p[0] = "\chapter{New Chapter}" + p[2]
-
-
-def p_paragraphline(p):
-    """paragraphline : PARAGRAPHLINE NEWLINE
-        | PARAGRAPHLINE EOF"""
-    p[0] = p[1]
-
-
-def p_list(p):
-    """list : NEWLINE listline
-        | listline
-        | listline listline
-        | NEWLINE listline listline"""
-    p[0] = "\\begin{itemize}\n" + p[1] + "\end{itemize}"
-
-
-def p_listline(p):
-    """listline : LISTLINE NEWLINE
-        | LISTLINE EOF"""
-    p[0] = "\item " + p[1] + "\n"
-
-
-def p_blockquote(p):
-    """blockquote : NEWLINE quoteline
-        | quoteline
-        | quoteline quoteline
-        | NEWLINE quoteline quoteline"""
-    p[0] = "\\begin{quote}\n" + p[1] + "\n\\end{quote}\n"
-
-
-def p_quoteline(p):
-    """quoteline : QUOTELINE NEWLINE
-        | QUOTELINE EOF"""
-    p[0] = "\\begin{quote} " + p[1] + "\\end{quote}\n"
-
-
-def p_fencedcodeblock(p):
-    """fencedcodeblock : OPEN_FENCE infostring FENCED_IGNORE_WS importspec FENCED_NEWLINE textline CLOSE_FENCE
-        | OPEN_FENCE FENCED_IGNORE_WS importspec FENCED_NEWLINE textline CLOSE_FENCE
-        | OPEN_FENCE infostring importspec FENCED_NEWLINE textline CLOSE_FENCE
-        | OPEN_FENCE infostring FENCED_IGNORE_WS FENCED_NEWLINE textline CLOSE_FENCE
-        | OPEN_FENCE importspec FENCED_NEWLINE textline CLOSE_FENCE
-        | OPEN_FENCE infostring FENCED_NEWLINE textline CLOSE_FENCE
-        | OPEN_FENCE FENCED_IGNORE_WS FENCED_NEWLINE textline CLOSE_FENCE
-        | OPEN_FENCE infostring FENCED_IGNORE_WS importspec FENCED_NEWLINE  textline textline CLOSE_FENCE
-        | OPEN_FENCE FENCED_IGNORE_WS importspec FENCED_NEWLINE textline textline CLOSE_FENCE
-        | OPEN_FENCE infostring importspec FENCED_NEWLINE textline textline CLOSE_FENCE
-        | OPEN_FENCE infostring FENCED_IGNORE_WS FENCED_NEWLINE textline textline CLOSE_FENCE
-        | OPEN_FENCE importspec FENCED_NEWLINE textline textline CLOSE_FENCE
-        | OPEN_FENCE infostring FENCED_NEWLINE textline textline CLOSE_FENCE
-        | OPEN_FENCE FENCED_IGNORE_WS FENCED_NEWLINE textline textline CLOSE_FENCE"""
-    p[0] = "fencedblock"
-
-def p_textline(p):
-    "textline : TEXTLINE"
-    p[0] = p[1]
-
-def p_infostring(p):
-    "infostring : WORD"
-    p[0] = "INFOSTING: " + p[1]
-
-def p_importspec(p):
-    "importspec : IMPORT FENCED_IGNORE_WS path FENCED_IGNORE_WS start FENCED_IGNORE_WS end"
-    p[0] = "importspec"
-
-def p_path(p):
-    """path : WORD
-        | STRING"""
-    p[0] = "path: " + p[1]
-
-def p_start(p):
-    """start : FROM FENCED_IGNORE_WS location
-        | FENCED_IGNORE_WS location
-        | FROM location
-        | location"""
-
-def p_end(p):
-    """end : TO FENCED_IGNORE_WS location
-        | TO location"""
-    p[0] = "end"
-
-
-def p_location(p):
-    """location : LINENUMBER
-    | STRING"""
-    p[0] = "location"
-
-
-def p_table(p):
-    """table : tableheading tabledelimiterrow tablerow
-        | tableheading tabledelimiterrow tablerow tablerow
-        | NEWLINE tableheading tabledelimiterrow tablerow
-        | NEWLINE NEWLINE tableheading tabledelimiterrow tablerow
-        | NEWLINE NEWLINE tableheading tabledelimiterrow tablerow tablerow
     """
+    heading : HASH sentence NEWLINE
+    """
+    p[0] = "\\begin{heading}" + p[2] + "\\end{heading}"
+
+def p_bulletitem(p):
+    """
+    bulletitem : BULLET sentence NEWLINE
+    """
+    p[0] = "\\begin{bulletitem} " + p[2] + "\\end{bulletitem}"
+
+def p_quote(p):
+    """
+    quote : GT sentence NEWLINE
+    """
+    p[0] = "\\begin{quote}" + p[2] + "\\end{quote}"
+    
+def p_word(p):
+    """
+        word : ALPHANUMERIC
+            | ALPHANUMERIC word
+    """
+    try:
+        p[0] = p[1] + p[2]
+    except:
+        p[0] = p[1]
+
+def p_sentence(p):
+    """
+    sentence : word NEWLINE
+    | word WS sentence
+    """
+    try:
+        p[0] = "word{" + p[1] + "}" + p[3]
+    except:
+        p[0] = "word{" + p[1] + "}"
+
+#/GRAMMAR
+data = """#Heading\n\n#Heading2\n\n>Jebanie dziada\n\n*Jebanie baby\n\n"""
+
+#lexowanie
+lexer = lex.lex()
+lexer.input(data)
+while True:
+    tok = lexer.token()
+    if not tok:
+        break      # No more input
+    print(tok)
 
 
-def p_tableheading(p):
-    "tableheading : tablerow"
 
-
-def p_tablerow(p):
-    """tablerow : cell PIPE NEWLINE
-        | cell cell PIPE NEWLINE
-        | cell NEWLINE
-        | cell cell NEWLINE
-        | cell PIPE EOF
-        | cell cell PIPE EOF
-        | cell EOF
-        | cell cell EOF
-        """
-
-
-def p_cell(p):
-    "cell : CELLTEXT"
-
-def p_error(p):
+#parsowanie
+parser = yacc.yacc()
+try:
+    s = data
+except EOFError:
     pass
-
-
-def p_tabledelimiterrow(p):
-    """tabledelimiterrow : TABLEDELIMINATORCELL PIPE NEWLINE
-        | TABLEDELIMINATORCELL  NEWLINE
-        | TABLEDELIMINATORCELL TABLEDELIMINATORCELL PIPE NEWLINE
-        | TABLEDELIMINATORCELL TABLEDELIMINATORCELL  NEWLINE"""
-
-#t_HEADINGLINE = r'HASH+\ ?LINECHAR+'
-def p_HEADINGLINE(p):
-    """HEADINGLINE : HASH LINECHAR
-        | HASH  HASH LINECHAR
-        | HASH WS LINECHAR
-        | HASH  HASH WS LINECHAR
-        | HASH  HASH WS LINECHAR LINECHAR
-        | HASH  HASH WS LINECHAR LINECHAR LINECHAR
-        | HASH  HASH WS LINECHAR LINECHAR LINECHAR LINECHAR
-        | HASH  HASH WS LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR
-        | HASH  HASH WS LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR
-        | HASH  HASH WS LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR
-        | HASH  HASH WS LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR
-        | HASH  HASH WS LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR
-        | HASH  HASH WS LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR
-        | HASH  HASH LINECHAR LINECHAR
-        | HASH  HASH LINECHAR LINECHAR LINECHAR
-        | HASH  HASH LINECHAR LINECHAR LINECHAR LINECHAR
-        | HASH  HASH LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR
-        | HASH  HASH LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR
-        | HASH  HASH LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR
-        | HASH  HASH LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR
-        | HASH  HASH LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR
-        | HASH  HASH LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR
-        """
-
-
-#t_QUOTELINE = r'GT?(LINECHAR+|LITERAL)+'
-def p_QUOTELINE(p):
-    """
-    QUOTELINE : LINECHAR LITERAL
-        | GT LINECHAR LITERAL
-        | GT LINECHAR LINECHAR LITERAL LITERAL
-        | GT LINECHAR LINECHAR LINECHAR LINECHAR LITERAL
-        | GT LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LITERAL
-        | GT LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LITERAL
-        | GT LINECHAR LITERAL LITERAL
-        | GT LINECHAR LINECHAR LITERAL LITERAL LITERAL
-        | GT LINECHAR LINECHAR LINECHAR LINECHAR LITERAL LINECHAR LITERAL
-        | GT LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LITERAL LITERAL LINECHAR
-        | GT LINECHAR LINECHAR LITERAL
-        | GT LINECHAR LINECHAR LITERAL LINECHAR LITERAL
-        | GT LINECHAR LINECHAR LITERAL LINECHAR LITERAL LITERAL
-        | GT LINECHAR LINECHAR LITERAL LINECHAR LINECHAR LITERAL
-    """
-
-#t_LITERAL = r'BACKTICK?LITERALCHAR+?BACKTICK'
-
-def p_LITERAL(p):
-    """
-    LITERAL : BACKTICK LITERALCHAR BACKTICK
-        | BACKTICK LITERALCHAR LITERALCHAR BACKTICK
-        | BACKTICK LITERALCHAR LITERALCHAR LITERALCHAR BACKTICK
-        | BACKTICK LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR BACKTICK
-        | BACKTICK LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR BACKTICK
-        | BACKTICK LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR BACKTICK
-        | BACKTICK LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR BACKTICK
-        | BACKTICK LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR BACKTICK
-        | BACKTICK LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR LITERALCHAR BACKTICK
-
-    """
-
-#t_WORD = r'WORDCHAR+'
-def p_WORD(p):
-    """WORD : WORDCHAR
-    | WORDCHAR WORDCHAR
-    | WORDCHAR WORDCHAR WORDCHAR
-    | WORDCHAR WORDCHAR WORDCHAR WORDCHAR
-    | WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR
-    | WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR
-    | WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR
-    | WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR
-    | WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR
-    | WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR
-    | WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR WORDCHAR
-    """
-
-
-#t_LISTLINE = r'WS*(BULLET|LISTNUMBER)WS+LINECHAR*'
-def p_LISTLINE(p):
-    """
-    LISTLINE : BULLET WS
-    | WS BULLET WS
-    | WS BULLET WS LINECHAR
-    | WS BULLET WS LINECHAR LINECHAR LINECHAR
-    | WS BULLET WS LINECHAR LINECHAR LINECHAR LINECHAR
-    | WS WS BULLET WS LINECHAR LINECHAR LINECHAR LINECHAR
-    | WS WS BULLET WS WS LINECHAR LINECHAR LINECHAR LINECHAR
-    """
-
-#t_PARAGRAPHLINE = r'INITIALPARACHAR(LINECHAR+|LITERAL)*'
-def p_PARAGRAPHLINE(p):
-    """
-    PARAGRAPHLINE : INITIALPARACHAR LINECHAR LITERAL
-    | INITIALPARACHAR LINECHAR LINECHAR LINECHAR
-    | INITIALPARACHAR LINECHAR LINECHAR LINECHAR LINECHAR LITERAL
-    | INITIALPARACHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LITERAL
-    | INITIALPARACHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LITERAL
-    """
-
-#t_STRING = r'\'LINECHAR*?\''
-def p_STRING(p):
-    """
-    STRING : QUOTE LINECHAR QUOTE
-    | QUOTE LINECHAR  LINECHAR QUOTE
-    | QUOTE LINECHAR  LINECHAR LINECHAR QUOTE
-    | QUOTE LINECHAR  LINECHAR LINECHAR LINECHAR QUOTE
-    | QUOTE LINECHAR  LINECHAR LINECHAR LINECHAR LINECHAR QUOTE
-    | QUOTE LINECHAR  LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR QUOTE
-    | QUOTE LINECHAR  LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR QUOTE
-    | QUOTE LINECHAR  LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR QUOTE
-    | QUOTE LINECHAR  LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR QUOTE
-    | QUOTE LINECHAR  LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR QUOTE
-    | QUOTE LINECHAR  LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR QUOTE
-    | QUOTE LINECHAR  LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR LINECHAR QUOTE
-    """
-
-#t_TABLEDELIMINATORCELL = PIPE? ' '? ':'? '-'+ ':'? ' '?
-def p_TABLEDELIMINATORCELL(p):
-    """
-    TABLEDELIMINATORCELL : PIPE
-    """
-
-
-
-
-
-
-
-
-
-
-#t_CELLCHAR = r'(ESCAPEDCHAR|ESCAPEDPIPE|WS|ALPHANUMERIC|PUNCTUATION)'
-def p_CELLCHAR(p):
-    """
-    CELLCHAR : ESCAPEDCHAR
-    | ESCAPEDPIPE
-    | WS
-    | ALPHANUMERIC
-    | PUNCTUATION
-    """
+if not s:
+    pass
+result = parser.parse(s)
+print(result)
