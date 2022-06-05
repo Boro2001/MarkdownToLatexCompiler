@@ -1,1 +1,371 @@
 Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    LITERALCHAR
+    PIPE
+    PUNCTUATION
+    SLASH
+
+Grammar
+
+Rule 0     S' -> document
+Rule 1     document -> block
+Rule 2     document -> block document
+Rule 3     block -> heading
+Rule 4     block -> quote
+Rule 5     block -> bulletitem
+Rule 6     block -> code
+Rule 7     heading -> HASH sentence NEWLINE
+Rule 8     bulletitem -> BULLET sentence NEWLINE
+Rule 9     quote -> GT sentence NEWLINE
+Rule 10    word -> ALPHANUMERIC
+Rule 11    word -> ALPHANUMERIC word
+Rule 12    sentence -> word
+Rule 13    sentence -> word WS sentence
+Rule 14    code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK
+
+Terminals, with rules where they appear
+
+ALPHANUMERIC         : 10 11
+BACKTICK             : 14 14 14 14 14 14
+BULLET               : 8
+GT                   : 9
+HASH                 : 7
+LITERALCHAR          : 
+NEWLINE              : 7 8 9
+PIPE                 : 
+PUNCTUATION          : 
+SLASH                : 
+WS                   : 13
+error                : 
+
+Nonterminals, with rules where they appear
+
+block                : 1 2
+bulletitem           : 5
+code                 : 6
+document             : 2 0
+heading              : 3
+quote                : 4
+sentence             : 7 8 9 13 14
+word                 : 11 12 13
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . document
+    (1) document -> . block
+    (2) document -> . block document
+    (3) block -> . heading
+    (4) block -> . quote
+    (5) block -> . bulletitem
+    (6) block -> . code
+    (7) heading -> . HASH sentence NEWLINE
+    (9) quote -> . GT sentence NEWLINE
+    (8) bulletitem -> . BULLET sentence NEWLINE
+    (14) code -> . BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK
+
+    HASH            shift and go to state 7
+    GT              shift and go to state 8
+    BULLET          shift and go to state 9
+    BACKTICK        shift and go to state 10
+
+    document                       shift and go to state 1
+    block                          shift and go to state 2
+    heading                        shift and go to state 3
+    quote                          shift and go to state 4
+    bulletitem                     shift and go to state 5
+    code                           shift and go to state 6
+
+state 1
+
+    (0) S' -> document .
+
+
+
+state 2
+
+    (1) document -> block .
+    (2) document -> block . document
+    (1) document -> . block
+    (2) document -> . block document
+    (3) block -> . heading
+    (4) block -> . quote
+    (5) block -> . bulletitem
+    (6) block -> . code
+    (7) heading -> . HASH sentence NEWLINE
+    (9) quote -> . GT sentence NEWLINE
+    (8) bulletitem -> . BULLET sentence NEWLINE
+    (14) code -> . BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK
+
+    $end            reduce using rule 1 (document -> block .)
+    HASH            shift and go to state 7
+    GT              shift and go to state 8
+    BULLET          shift and go to state 9
+    BACKTICK        shift and go to state 10
+
+    block                          shift and go to state 2
+    document                       shift and go to state 11
+    heading                        shift and go to state 3
+    quote                          shift and go to state 4
+    bulletitem                     shift and go to state 5
+    code                           shift and go to state 6
+
+state 3
+
+    (3) block -> heading .
+
+    HASH            reduce using rule 3 (block -> heading .)
+    GT              reduce using rule 3 (block -> heading .)
+    BULLET          reduce using rule 3 (block -> heading .)
+    BACKTICK        reduce using rule 3 (block -> heading .)
+    $end            reduce using rule 3 (block -> heading .)
+
+
+state 4
+
+    (4) block -> quote .
+
+    HASH            reduce using rule 4 (block -> quote .)
+    GT              reduce using rule 4 (block -> quote .)
+    BULLET          reduce using rule 4 (block -> quote .)
+    BACKTICK        reduce using rule 4 (block -> quote .)
+    $end            reduce using rule 4 (block -> quote .)
+
+
+state 5
+
+    (5) block -> bulletitem .
+
+    HASH            reduce using rule 5 (block -> bulletitem .)
+    GT              reduce using rule 5 (block -> bulletitem .)
+    BULLET          reduce using rule 5 (block -> bulletitem .)
+    BACKTICK        reduce using rule 5 (block -> bulletitem .)
+    $end            reduce using rule 5 (block -> bulletitem .)
+
+
+state 6
+
+    (6) block -> code .
+
+    HASH            reduce using rule 6 (block -> code .)
+    GT              reduce using rule 6 (block -> code .)
+    BULLET          reduce using rule 6 (block -> code .)
+    BACKTICK        reduce using rule 6 (block -> code .)
+    $end            reduce using rule 6 (block -> code .)
+
+
+state 7
+
+    (7) heading -> HASH . sentence NEWLINE
+    (12) sentence -> . word
+    (13) sentence -> . word WS sentence
+    (10) word -> . ALPHANUMERIC
+    (11) word -> . ALPHANUMERIC word
+
+    ALPHANUMERIC    shift and go to state 14
+
+    sentence                       shift and go to state 12
+    word                           shift and go to state 13
+
+state 8
+
+    (9) quote -> GT . sentence NEWLINE
+    (12) sentence -> . word
+    (13) sentence -> . word WS sentence
+    (10) word -> . ALPHANUMERIC
+    (11) word -> . ALPHANUMERIC word
+
+    ALPHANUMERIC    shift and go to state 14
+
+    sentence                       shift and go to state 15
+    word                           shift and go to state 13
+
+state 9
+
+    (8) bulletitem -> BULLET . sentence NEWLINE
+    (12) sentence -> . word
+    (13) sentence -> . word WS sentence
+    (10) word -> . ALPHANUMERIC
+    (11) word -> . ALPHANUMERIC word
+
+    ALPHANUMERIC    shift and go to state 14
+
+    sentence                       shift and go to state 16
+    word                           shift and go to state 13
+
+state 10
+
+    (14) code -> BACKTICK . BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK
+
+    BACKTICK        shift and go to state 17
+
+
+state 11
+
+    (2) document -> block document .
+
+    $end            reduce using rule 2 (document -> block document .)
+
+
+state 12
+
+    (7) heading -> HASH sentence . NEWLINE
+
+    NEWLINE         shift and go to state 18
+
+
+state 13
+
+    (12) sentence -> word .
+    (13) sentence -> word . WS sentence
+
+    NEWLINE         reduce using rule 12 (sentence -> word .)
+    BACKTICK        reduce using rule 12 (sentence -> word .)
+    WS              shift and go to state 19
+
+
+state 14
+
+    (10) word -> ALPHANUMERIC .
+    (11) word -> ALPHANUMERIC . word
+    (10) word -> . ALPHANUMERIC
+    (11) word -> . ALPHANUMERIC word
+
+    WS              reduce using rule 10 (word -> ALPHANUMERIC .)
+    NEWLINE         reduce using rule 10 (word -> ALPHANUMERIC .)
+    BACKTICK        reduce using rule 10 (word -> ALPHANUMERIC .)
+    ALPHANUMERIC    shift and go to state 14
+
+    word                           shift and go to state 20
+
+state 15
+
+    (9) quote -> GT sentence . NEWLINE
+
+    NEWLINE         shift and go to state 21
+
+
+state 16
+
+    (8) bulletitem -> BULLET sentence . NEWLINE
+
+    NEWLINE         shift and go to state 22
+
+
+state 17
+
+    (14) code -> BACKTICK BACKTICK . BACKTICK sentence BACKTICK BACKTICK BACKTICK
+
+    BACKTICK        shift and go to state 23
+
+
+state 18
+
+    (7) heading -> HASH sentence NEWLINE .
+
+    HASH            reduce using rule 7 (heading -> HASH sentence NEWLINE .)
+    GT              reduce using rule 7 (heading -> HASH sentence NEWLINE .)
+    BULLET          reduce using rule 7 (heading -> HASH sentence NEWLINE .)
+    BACKTICK        reduce using rule 7 (heading -> HASH sentence NEWLINE .)
+    $end            reduce using rule 7 (heading -> HASH sentence NEWLINE .)
+
+
+state 19
+
+    (13) sentence -> word WS . sentence
+    (12) sentence -> . word
+    (13) sentence -> . word WS sentence
+    (10) word -> . ALPHANUMERIC
+    (11) word -> . ALPHANUMERIC word
+
+    ALPHANUMERIC    shift and go to state 14
+
+    word                           shift and go to state 13
+    sentence                       shift and go to state 24
+
+state 20
+
+    (11) word -> ALPHANUMERIC word .
+
+    WS              reduce using rule 11 (word -> ALPHANUMERIC word .)
+    NEWLINE         reduce using rule 11 (word -> ALPHANUMERIC word .)
+    BACKTICK        reduce using rule 11 (word -> ALPHANUMERIC word .)
+
+
+state 21
+
+    (9) quote -> GT sentence NEWLINE .
+
+    HASH            reduce using rule 9 (quote -> GT sentence NEWLINE .)
+    GT              reduce using rule 9 (quote -> GT sentence NEWLINE .)
+    BULLET          reduce using rule 9 (quote -> GT sentence NEWLINE .)
+    BACKTICK        reduce using rule 9 (quote -> GT sentence NEWLINE .)
+    $end            reduce using rule 9 (quote -> GT sentence NEWLINE .)
+
+
+state 22
+
+    (8) bulletitem -> BULLET sentence NEWLINE .
+
+    HASH            reduce using rule 8 (bulletitem -> BULLET sentence NEWLINE .)
+    GT              reduce using rule 8 (bulletitem -> BULLET sentence NEWLINE .)
+    BULLET          reduce using rule 8 (bulletitem -> BULLET sentence NEWLINE .)
+    BACKTICK        reduce using rule 8 (bulletitem -> BULLET sentence NEWLINE .)
+    $end            reduce using rule 8 (bulletitem -> BULLET sentence NEWLINE .)
+
+
+state 23
+
+    (14) code -> BACKTICK BACKTICK BACKTICK . sentence BACKTICK BACKTICK BACKTICK
+    (12) sentence -> . word
+    (13) sentence -> . word WS sentence
+    (10) word -> . ALPHANUMERIC
+    (11) word -> . ALPHANUMERIC word
+
+    ALPHANUMERIC    shift and go to state 14
+
+    sentence                       shift and go to state 25
+    word                           shift and go to state 13
+
+state 24
+
+    (13) sentence -> word WS sentence .
+
+    NEWLINE         reduce using rule 13 (sentence -> word WS sentence .)
+    BACKTICK        reduce using rule 13 (sentence -> word WS sentence .)
+
+
+state 25
+
+    (14) code -> BACKTICK BACKTICK BACKTICK sentence . BACKTICK BACKTICK BACKTICK
+
+    BACKTICK        shift and go to state 26
+
+
+state 26
+
+    (14) code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK . BACKTICK BACKTICK
+
+    BACKTICK        shift and go to state 27
+
+
+state 27
+
+    (14) code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK . BACKTICK
+
+    BACKTICK        shift and go to state 28
+
+
+state 28
+
+    (14) code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK .
+
+    HASH            reduce using rule 14 (code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK .)
+    GT              reduce using rule 14 (code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK .)
+    BULLET          reduce using rule 14 (code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK .)
+    BACKTICK        reduce using rule 14 (code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK .)
+    $end            reduce using rule 14 (code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK .)
+

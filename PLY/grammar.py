@@ -15,7 +15,6 @@ tokens = (
     'WS', # whitespace
     'BULLET', # * 
     'LITERALCHAR' # ' <- ten jest do nawiasów
-
 )
 t_NEWLINE = r'\n'
 t_BACKTICK = r'`'
@@ -46,6 +45,7 @@ def p_block(p):
     block : heading
     | quote
     | bulletitem
+    | code
     """
     p[0] = p[1]
 
@@ -79,16 +79,26 @@ def p_word(p):
 
 def p_sentence(p):
     """
-    sentence : word NEWLINE
+    sentence : word
     | word WS sentence
     """
+
     try:
         p[0] = "word{" + p[1] + "}" + p[3]
     except:
         p[0] = "word{" + p[1] + "}"
 
+
+def p_code(p):
+    """
+    code : BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK
+    """
+    p[0] = "\\begin{code}" + p[2] + "\\end{code}"
+
 #/GRAMMAR
-data = """#Heading\n\n#Heading2\n\n>Jebanie dziada\n\n*Jebanie baby\n\n"""
+data = """#Heading one\n"""
+
+
 
 #lexowanie
 lexer = lex.lex()
