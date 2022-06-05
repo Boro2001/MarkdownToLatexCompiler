@@ -14,7 +14,12 @@ tokens = (
     'PUNCTUATION', # ale nie moze byc # | > ` \ '
     'WS', # whitespace
     'BULLET', # * 
-    'LITERALCHAR' # ' <- ten jest do nawiasów
+    'LITERALCHAR',  # ' <- ten jest do nawiasów
+    'FLOOR', # _
+    'LEFTBRACKET',  # [
+    'RIGHTBRACKET',  # ]
+    'LEFTMBRACKET',  # {
+    'RIGHTMBRACKET'  # }
 )
 t_NEWLINE = r'\n'
 t_BACKTICK = r'`'
@@ -23,20 +28,30 @@ t_HASH = r'\#'
 t_PIPE = r'\|'
 t_SLASH = r'\\'
 t_ALPHANUMERIC = r'[a-zA-Z0-9]'
-t_PUNCTUATION = r'[!"$%&(),-./:;<=?@^_{}]'
+t_PUNCTUATION = r'[!"$%&,-./:;<=?@^{}]'
 t_WS = r'\ '
 t_BULLET = r'\*'
 t_LITERALCHAR = r'\''
+t_FLOOR = r'_'
+t_LEFTBRACKET = r'\['
+t_RIGHTBRACKET = r'\]'
+t_LEFTMBRACKET = r'\('
+t_RIGHTMBRACKET = r'\)'
 # /TOKENS
+
+def t_error(t):
+    print("Illegal character '%s'" % t.value[0])
+    t.lexer.skip(1)
 
 # GRAMMAR
 def p_document(p):
     """document : block
-                | block document"""
+                | document block
+    """
     if len(p) == 2:
         p[0] = "\\begin{document}" + p[1] + "\\end{document}"
     elif len(p) == 3:
-        p[0] = "\\begin{document}" + p[1] + p[2][17:-15] + "\\end{document}"
+        p[0] = "\\begin{document}" + p[1][16:-14] + p[2] + "\\end{document}"
     else:
         print("Document wrong argument lenght")
 
@@ -46,6 +61,18 @@ def p_block(p):
     | quote
     | bulletitem
     | code
+    | paragraph
+    | bolditem
+    | italicitem
+    | urllink
+    | heading NEWLINE
+    | quote NEWLINE
+    | bulletitem NEWLINE
+    | code NEWLINE
+    | paragraph NEWLINE
+    | bolditem NEWLINE
+    | italicitem NEWLINE
+    | urllink NEWLINE
     """
     p[0] = p[1]
 
@@ -53,24 +80,51 @@ def p_heading(p):
     """
     heading : HASH sentence NEWLINE
     """
-    p[0] = "\\begin{heading}" + p[2] + "\\end{heading}"
+    p[0] = "\\section{" + p[2] + "}\n"
 
 def p_bulletitem(p):
     """
     bulletitem : BULLET sentence NEWLINE
     """
-    p[0] = "\\begin{bulletitem} " + p[2] + "\\end{bulletitem}"
+    p[0] = "\\begin{bulletitem} " + p[2] + "\\end{bulletitem}\n"
+
+
+def p_bolditem(p):
+    """
+    bolditem : BULLET sentence BULLET
+    | FLOOR sentence FLOOR
+    """
+    p[0] = "\\textbf{" + p[2] + "}"
+
+
+def p_italicitem(p):
+    """
+    italicitem : BULLET BULLET sentence BULLET BULLET
+    | FLOOR FLOOR sentence FLOOR FLOOR
+    """
+    p[0] = "\\textit{" + p[3] + "}"
+
+
+def p_urllink(p):
+    """
+    urllink : LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET
+    """
+    p[0] = "\\href{" + p[5] + "}{" + p[2] + "}"
+
+
 
 def p_quote(p):
     """
     quote : GT sentence NEWLINE
     """
-    p[0] = "\\begin{quote}" + p[2] + "\\end{quote}"
+    p[0] = "\\begin{quote}" + p[2] + "\\end{quote}\n"
     
 def p_word(p):
     """
         word : ALPHANUMERIC
             | ALPHANUMERIC word
+            | PUNCTUATION
+            | PUNCTUATION word
     """
     try:
         p[0] = p[1] + p[2]
@@ -80,27 +134,39 @@ def p_word(p):
 def p_sentence(p):
     """
     sentence : word
-    | word WS sentence
+    | sentence WS word
     """
-
     try:
-        p[0] = "word{" + p[1] + "}" + p[3]
+        p[0] = p[1] + " " + p[3]
     except:
-        p[0] = "word{" + p[1] + "}"
+        p[0] = p[1]
+
+def p_paragraph(p):
+    """
+    paragraph : sentence NEWLINE
+    | sentence NEWLINE paragraph
+    """
+    p[0] = "\\paragraph{" + p[1] + "}\n"
+
 
 
 def p_code(p):
     """
-    code : BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK
+    code : BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK
     """
-    p[0] = "\\begin{code}" + p[2] + "\\end{code}"
-
-#/GRAMMAR
-data = """#Heading one\n"""
+    p[0] = "\\begin{code}\n" + p[5] + "\\end{code}\n"
 
 
+# /GRAMMAR
+data = """[link do internetu](http://www.overleaf.com)
+ala ma kota
 
-#lexowanie
+kot ma ale
+#heading
+ostatnia linia
+"""
+
+# lexowanie
 lexer = lex.lex()
 lexer.input(data)
 while True:

@@ -4,52 +4,81 @@ Unused terminals:
 
     LITERALCHAR
     PIPE
-    PUNCTUATION
     SLASH
 
 Grammar
 
 Rule 0     S' -> document
 Rule 1     document -> block
-Rule 2     document -> block document
+Rule 2     document -> document block
 Rule 3     block -> heading
 Rule 4     block -> quote
 Rule 5     block -> bulletitem
 Rule 6     block -> code
-Rule 7     heading -> HASH sentence NEWLINE
-Rule 8     bulletitem -> BULLET sentence NEWLINE
-Rule 9     quote -> GT sentence NEWLINE
-Rule 10    word -> ALPHANUMERIC
-Rule 11    word -> ALPHANUMERIC word
-Rule 12    sentence -> word
-Rule 13    sentence -> word WS sentence
-Rule 14    code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK
+Rule 7     block -> paragraph
+Rule 8     block -> bolditem
+Rule 9     block -> italicitem
+Rule 10    block -> urllink
+Rule 11    block -> heading NEWLINE
+Rule 12    block -> quote NEWLINE
+Rule 13    block -> bulletitem NEWLINE
+Rule 14    block -> code NEWLINE
+Rule 15    block -> paragraph NEWLINE
+Rule 16    block -> bolditem NEWLINE
+Rule 17    block -> italicitem NEWLINE
+Rule 18    block -> urllink NEWLINE
+Rule 19    heading -> HASH sentence NEWLINE
+Rule 20    bulletitem -> BULLET sentence NEWLINE
+Rule 21    bolditem -> BULLET sentence BULLET
+Rule 22    bolditem -> FLOOR sentence FLOOR
+Rule 23    italicitem -> BULLET BULLET sentence BULLET BULLET
+Rule 24    italicitem -> FLOOR FLOOR sentence FLOOR FLOOR
+Rule 25    urllink -> LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET
+Rule 26    quote -> GT sentence NEWLINE
+Rule 27    word -> ALPHANUMERIC
+Rule 28    word -> ALPHANUMERIC word
+Rule 29    word -> PUNCTUATION
+Rule 30    word -> PUNCTUATION word
+Rule 31    sentence -> word
+Rule 32    sentence -> sentence WS word
+Rule 33    paragraph -> sentence NEWLINE
+Rule 34    paragraph -> sentence NEWLINE paragraph
+Rule 35    code -> BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK
 
 Terminals, with rules where they appear
 
-ALPHANUMERIC         : 10 11
-BACKTICK             : 14 14 14 14 14 14
-BULLET               : 8
-GT                   : 9
-HASH                 : 7
+ALPHANUMERIC         : 27 28
+BACKTICK             : 35 35 35 35 35 35
+BULLET               : 20 21 21 23 23 23 23
+FLOOR                : 22 22 24 24 24 24
+GT                   : 26
+HASH                 : 19
+LEFTBRACKET          : 25
+LEFTMBRACKET         : 25
 LITERALCHAR          : 
-NEWLINE              : 7 8 9
+NEWLINE              : 11 12 13 14 15 16 17 18 19 20 26 33 34 35
 PIPE                 : 
-PUNCTUATION          : 
+PUNCTUATION          : 29 30
+RIGHTBRACKET         : 25
+RIGHTMBRACKET        : 25
 SLASH                : 
-WS                   : 13
+WS                   : 32
 error                : 
 
 Nonterminals, with rules where they appear
 
 block                : 1 2
-bulletitem           : 5
-code                 : 6
+bolditem             : 8 16
+bulletitem           : 5 13
+code                 : 6 14
 document             : 2 0
-heading              : 3
-quote                : 4
-sentence             : 7 8 9 13 14
-word                 : 11 12 13
+heading              : 3 11
+italicitem           : 9 17
+paragraph            : 7 15 34 35
+quote                : 4 12
+sentence             : 19 20 21 22 23 24 25 25 26 32 33 34
+urllink              : 10 18
+word                 : 28 30 31 32
 
 Parsing method: LALR
 
@@ -57,20 +86,49 @@ state 0
 
     (0) S' -> . document
     (1) document -> . block
-    (2) document -> . block document
+    (2) document -> . document block
     (3) block -> . heading
     (4) block -> . quote
     (5) block -> . bulletitem
     (6) block -> . code
-    (7) heading -> . HASH sentence NEWLINE
-    (9) quote -> . GT sentence NEWLINE
-    (8) bulletitem -> . BULLET sentence NEWLINE
-    (14) code -> . BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK
+    (7) block -> . paragraph
+    (8) block -> . bolditem
+    (9) block -> . italicitem
+    (10) block -> . urllink
+    (11) block -> . heading NEWLINE
+    (12) block -> . quote NEWLINE
+    (13) block -> . bulletitem NEWLINE
+    (14) block -> . code NEWLINE
+    (15) block -> . paragraph NEWLINE
+    (16) block -> . bolditem NEWLINE
+    (17) block -> . italicitem NEWLINE
+    (18) block -> . urllink NEWLINE
+    (19) heading -> . HASH sentence NEWLINE
+    (26) quote -> . GT sentence NEWLINE
+    (20) bulletitem -> . BULLET sentence NEWLINE
+    (35) code -> . BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK
+    (33) paragraph -> . sentence NEWLINE
+    (34) paragraph -> . sentence NEWLINE paragraph
+    (21) bolditem -> . BULLET sentence BULLET
+    (22) bolditem -> . FLOOR sentence FLOOR
+    (23) italicitem -> . BULLET BULLET sentence BULLET BULLET
+    (24) italicitem -> . FLOOR FLOOR sentence FLOOR FLOOR
+    (25) urllink -> . LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET
+    (31) sentence -> . word
+    (32) sentence -> . sentence WS word
+    (27) word -> . ALPHANUMERIC
+    (28) word -> . ALPHANUMERIC word
+    (29) word -> . PUNCTUATION
+    (30) word -> . PUNCTUATION word
 
-    HASH            shift and go to state 7
-    GT              shift and go to state 8
-    BULLET          shift and go to state 9
-    BACKTICK        shift and go to state 10
+    HASH            shift and go to state 11
+    GT              shift and go to state 13
+    BULLET          shift and go to state 14
+    BACKTICK        shift and go to state 15
+    FLOOR           shift and go to state 16
+    LEFTBRACKET     shift and go to state 17
+    ALPHANUMERIC    shift and go to state 19
+    PUNCTUATION     shift and go to state 20
 
     document                       shift and go to state 1
     block                          shift and go to state 2
@@ -78,294 +136,952 @@ state 0
     quote                          shift and go to state 4
     bulletitem                     shift and go to state 5
     code                           shift and go to state 6
+    paragraph                      shift and go to state 7
+    bolditem                       shift and go to state 8
+    italicitem                     shift and go to state 9
+    urllink                        shift and go to state 10
+    sentence                       shift and go to state 12
+    word                           shift and go to state 18
 
 state 1
 
     (0) S' -> document .
-
-
-
-state 2
-
-    (1) document -> block .
-    (2) document -> block . document
-    (1) document -> . block
-    (2) document -> . block document
+    (2) document -> document . block
     (3) block -> . heading
     (4) block -> . quote
     (5) block -> . bulletitem
     (6) block -> . code
-    (7) heading -> . HASH sentence NEWLINE
-    (9) quote -> . GT sentence NEWLINE
-    (8) bulletitem -> . BULLET sentence NEWLINE
-    (14) code -> . BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK
+    (7) block -> . paragraph
+    (8) block -> . bolditem
+    (9) block -> . italicitem
+    (10) block -> . urllink
+    (11) block -> . heading NEWLINE
+    (12) block -> . quote NEWLINE
+    (13) block -> . bulletitem NEWLINE
+    (14) block -> . code NEWLINE
+    (15) block -> . paragraph NEWLINE
+    (16) block -> . bolditem NEWLINE
+    (17) block -> . italicitem NEWLINE
+    (18) block -> . urllink NEWLINE
+    (19) heading -> . HASH sentence NEWLINE
+    (26) quote -> . GT sentence NEWLINE
+    (20) bulletitem -> . BULLET sentence NEWLINE
+    (35) code -> . BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK
+    (33) paragraph -> . sentence NEWLINE
+    (34) paragraph -> . sentence NEWLINE paragraph
+    (21) bolditem -> . BULLET sentence BULLET
+    (22) bolditem -> . FLOOR sentence FLOOR
+    (23) italicitem -> . BULLET BULLET sentence BULLET BULLET
+    (24) italicitem -> . FLOOR FLOOR sentence FLOOR FLOOR
+    (25) urllink -> . LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET
+    (31) sentence -> . word
+    (32) sentence -> . sentence WS word
+    (27) word -> . ALPHANUMERIC
+    (28) word -> . ALPHANUMERIC word
+    (29) word -> . PUNCTUATION
+    (30) word -> . PUNCTUATION word
 
-    $end            reduce using rule 1 (document -> block .)
-    HASH            shift and go to state 7
-    GT              shift and go to state 8
-    BULLET          shift and go to state 9
-    BACKTICK        shift and go to state 10
+    HASH            shift and go to state 11
+    GT              shift and go to state 13
+    BULLET          shift and go to state 14
+    BACKTICK        shift and go to state 15
+    FLOOR           shift and go to state 16
+    LEFTBRACKET     shift and go to state 17
+    ALPHANUMERIC    shift and go to state 19
+    PUNCTUATION     shift and go to state 20
 
-    block                          shift and go to state 2
-    document                       shift and go to state 11
+    block                          shift and go to state 21
     heading                        shift and go to state 3
     quote                          shift and go to state 4
     bulletitem                     shift and go to state 5
     code                           shift and go to state 6
+    paragraph                      shift and go to state 7
+    bolditem                       shift and go to state 8
+    italicitem                     shift and go to state 9
+    urllink                        shift and go to state 10
+    sentence                       shift and go to state 12
+    word                           shift and go to state 18
+
+state 2
+
+    (1) document -> block .
+
+    HASH            reduce using rule 1 (document -> block .)
+    GT              reduce using rule 1 (document -> block .)
+    BULLET          reduce using rule 1 (document -> block .)
+    BACKTICK        reduce using rule 1 (document -> block .)
+    FLOOR           reduce using rule 1 (document -> block .)
+    LEFTBRACKET     reduce using rule 1 (document -> block .)
+    ALPHANUMERIC    reduce using rule 1 (document -> block .)
+    PUNCTUATION     reduce using rule 1 (document -> block .)
+    $end            reduce using rule 1 (document -> block .)
+
 
 state 3
 
     (3) block -> heading .
+    (11) block -> heading . NEWLINE
 
     HASH            reduce using rule 3 (block -> heading .)
     GT              reduce using rule 3 (block -> heading .)
     BULLET          reduce using rule 3 (block -> heading .)
     BACKTICK        reduce using rule 3 (block -> heading .)
+    FLOOR           reduce using rule 3 (block -> heading .)
+    LEFTBRACKET     reduce using rule 3 (block -> heading .)
+    ALPHANUMERIC    reduce using rule 3 (block -> heading .)
+    PUNCTUATION     reduce using rule 3 (block -> heading .)
     $end            reduce using rule 3 (block -> heading .)
+    NEWLINE         shift and go to state 22
 
 
 state 4
 
     (4) block -> quote .
+    (12) block -> quote . NEWLINE
 
     HASH            reduce using rule 4 (block -> quote .)
     GT              reduce using rule 4 (block -> quote .)
     BULLET          reduce using rule 4 (block -> quote .)
     BACKTICK        reduce using rule 4 (block -> quote .)
+    FLOOR           reduce using rule 4 (block -> quote .)
+    LEFTBRACKET     reduce using rule 4 (block -> quote .)
+    ALPHANUMERIC    reduce using rule 4 (block -> quote .)
+    PUNCTUATION     reduce using rule 4 (block -> quote .)
     $end            reduce using rule 4 (block -> quote .)
+    NEWLINE         shift and go to state 23
 
 
 state 5
 
     (5) block -> bulletitem .
+    (13) block -> bulletitem . NEWLINE
 
     HASH            reduce using rule 5 (block -> bulletitem .)
     GT              reduce using rule 5 (block -> bulletitem .)
     BULLET          reduce using rule 5 (block -> bulletitem .)
     BACKTICK        reduce using rule 5 (block -> bulletitem .)
+    FLOOR           reduce using rule 5 (block -> bulletitem .)
+    LEFTBRACKET     reduce using rule 5 (block -> bulletitem .)
+    ALPHANUMERIC    reduce using rule 5 (block -> bulletitem .)
+    PUNCTUATION     reduce using rule 5 (block -> bulletitem .)
     $end            reduce using rule 5 (block -> bulletitem .)
+    NEWLINE         shift and go to state 24
 
 
 state 6
 
     (6) block -> code .
+    (14) block -> code . NEWLINE
 
     HASH            reduce using rule 6 (block -> code .)
     GT              reduce using rule 6 (block -> code .)
     BULLET          reduce using rule 6 (block -> code .)
     BACKTICK        reduce using rule 6 (block -> code .)
+    FLOOR           reduce using rule 6 (block -> code .)
+    LEFTBRACKET     reduce using rule 6 (block -> code .)
+    ALPHANUMERIC    reduce using rule 6 (block -> code .)
+    PUNCTUATION     reduce using rule 6 (block -> code .)
     $end            reduce using rule 6 (block -> code .)
+    NEWLINE         shift and go to state 25
 
 
 state 7
 
-    (7) heading -> HASH . sentence NEWLINE
-    (12) sentence -> . word
-    (13) sentence -> . word WS sentence
-    (10) word -> . ALPHANUMERIC
-    (11) word -> . ALPHANUMERIC word
+    (7) block -> paragraph .
+    (15) block -> paragraph . NEWLINE
 
-    ALPHANUMERIC    shift and go to state 14
+    HASH            reduce using rule 7 (block -> paragraph .)
+    GT              reduce using rule 7 (block -> paragraph .)
+    BULLET          reduce using rule 7 (block -> paragraph .)
+    BACKTICK        reduce using rule 7 (block -> paragraph .)
+    FLOOR           reduce using rule 7 (block -> paragraph .)
+    LEFTBRACKET     reduce using rule 7 (block -> paragraph .)
+    ALPHANUMERIC    reduce using rule 7 (block -> paragraph .)
+    PUNCTUATION     reduce using rule 7 (block -> paragraph .)
+    $end            reduce using rule 7 (block -> paragraph .)
+    NEWLINE         shift and go to state 26
 
-    sentence                       shift and go to state 12
-    word                           shift and go to state 13
 
 state 8
 
-    (9) quote -> GT . sentence NEWLINE
-    (12) sentence -> . word
-    (13) sentence -> . word WS sentence
-    (10) word -> . ALPHANUMERIC
-    (11) word -> . ALPHANUMERIC word
+    (8) block -> bolditem .
+    (16) block -> bolditem . NEWLINE
 
-    ALPHANUMERIC    shift and go to state 14
+    HASH            reduce using rule 8 (block -> bolditem .)
+    GT              reduce using rule 8 (block -> bolditem .)
+    BULLET          reduce using rule 8 (block -> bolditem .)
+    BACKTICK        reduce using rule 8 (block -> bolditem .)
+    FLOOR           reduce using rule 8 (block -> bolditem .)
+    LEFTBRACKET     reduce using rule 8 (block -> bolditem .)
+    ALPHANUMERIC    reduce using rule 8 (block -> bolditem .)
+    PUNCTUATION     reduce using rule 8 (block -> bolditem .)
+    $end            reduce using rule 8 (block -> bolditem .)
+    NEWLINE         shift and go to state 27
 
-    sentence                       shift and go to state 15
-    word                           shift and go to state 13
 
 state 9
 
-    (8) bulletitem -> BULLET . sentence NEWLINE
-    (12) sentence -> . word
-    (13) sentence -> . word WS sentence
-    (10) word -> . ALPHANUMERIC
-    (11) word -> . ALPHANUMERIC word
+    (9) block -> italicitem .
+    (17) block -> italicitem . NEWLINE
 
-    ALPHANUMERIC    shift and go to state 14
+    HASH            reduce using rule 9 (block -> italicitem .)
+    GT              reduce using rule 9 (block -> italicitem .)
+    BULLET          reduce using rule 9 (block -> italicitem .)
+    BACKTICK        reduce using rule 9 (block -> italicitem .)
+    FLOOR           reduce using rule 9 (block -> italicitem .)
+    LEFTBRACKET     reduce using rule 9 (block -> italicitem .)
+    ALPHANUMERIC    reduce using rule 9 (block -> italicitem .)
+    PUNCTUATION     reduce using rule 9 (block -> italicitem .)
+    $end            reduce using rule 9 (block -> italicitem .)
+    NEWLINE         shift and go to state 28
 
-    sentence                       shift and go to state 16
-    word                           shift and go to state 13
 
 state 10
 
-    (14) code -> BACKTICK . BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK
+    (10) block -> urllink .
+    (18) block -> urllink . NEWLINE
 
-    BACKTICK        shift and go to state 17
+    HASH            reduce using rule 10 (block -> urllink .)
+    GT              reduce using rule 10 (block -> urllink .)
+    BULLET          reduce using rule 10 (block -> urllink .)
+    BACKTICK        reduce using rule 10 (block -> urllink .)
+    FLOOR           reduce using rule 10 (block -> urllink .)
+    LEFTBRACKET     reduce using rule 10 (block -> urllink .)
+    ALPHANUMERIC    reduce using rule 10 (block -> urllink .)
+    PUNCTUATION     reduce using rule 10 (block -> urllink .)
+    $end            reduce using rule 10 (block -> urllink .)
+    NEWLINE         shift and go to state 29
 
 
 state 11
 
-    (2) document -> block document .
+    (19) heading -> HASH . sentence NEWLINE
+    (31) sentence -> . word
+    (32) sentence -> . sentence WS word
+    (27) word -> . ALPHANUMERIC
+    (28) word -> . ALPHANUMERIC word
+    (29) word -> . PUNCTUATION
+    (30) word -> . PUNCTUATION word
 
-    $end            reduce using rule 2 (document -> block document .)
+    ALPHANUMERIC    shift and go to state 19
+    PUNCTUATION     shift and go to state 20
 
+    sentence                       shift and go to state 30
+    word                           shift and go to state 18
 
 state 12
 
-    (7) heading -> HASH sentence . NEWLINE
+    (33) paragraph -> sentence . NEWLINE
+    (34) paragraph -> sentence . NEWLINE paragraph
+    (32) sentence -> sentence . WS word
 
-    NEWLINE         shift and go to state 18
+    NEWLINE         shift and go to state 31
+    WS              shift and go to state 32
 
 
 state 13
 
-    (12) sentence -> word .
-    (13) sentence -> word . WS sentence
+    (26) quote -> GT . sentence NEWLINE
+    (31) sentence -> . word
+    (32) sentence -> . sentence WS word
+    (27) word -> . ALPHANUMERIC
+    (28) word -> . ALPHANUMERIC word
+    (29) word -> . PUNCTUATION
+    (30) word -> . PUNCTUATION word
 
-    NEWLINE         reduce using rule 12 (sentence -> word .)
-    BACKTICK        reduce using rule 12 (sentence -> word .)
-    WS              shift and go to state 19
+    ALPHANUMERIC    shift and go to state 19
+    PUNCTUATION     shift and go to state 20
 
+    sentence                       shift and go to state 33
+    word                           shift and go to state 18
 
 state 14
 
-    (10) word -> ALPHANUMERIC .
-    (11) word -> ALPHANUMERIC . word
-    (10) word -> . ALPHANUMERIC
-    (11) word -> . ALPHANUMERIC word
+    (20) bulletitem -> BULLET . sentence NEWLINE
+    (21) bolditem -> BULLET . sentence BULLET
+    (23) italicitem -> BULLET . BULLET sentence BULLET BULLET
+    (31) sentence -> . word
+    (32) sentence -> . sentence WS word
+    (27) word -> . ALPHANUMERIC
+    (28) word -> . ALPHANUMERIC word
+    (29) word -> . PUNCTUATION
+    (30) word -> . PUNCTUATION word
 
-    WS              reduce using rule 10 (word -> ALPHANUMERIC .)
-    NEWLINE         reduce using rule 10 (word -> ALPHANUMERIC .)
-    BACKTICK        reduce using rule 10 (word -> ALPHANUMERIC .)
-    ALPHANUMERIC    shift and go to state 14
+    BULLET          shift and go to state 34
+    ALPHANUMERIC    shift and go to state 19
+    PUNCTUATION     shift and go to state 20
 
-    word                           shift and go to state 20
+    sentence                       shift and go to state 35
+    word                           shift and go to state 18
 
 state 15
 
-    (9) quote -> GT sentence . NEWLINE
+    (35) code -> BACKTICK . BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK
 
-    NEWLINE         shift and go to state 21
+    BACKTICK        shift and go to state 36
 
 
 state 16
 
-    (8) bulletitem -> BULLET sentence . NEWLINE
+    (22) bolditem -> FLOOR . sentence FLOOR
+    (24) italicitem -> FLOOR . FLOOR sentence FLOOR FLOOR
+    (31) sentence -> . word
+    (32) sentence -> . sentence WS word
+    (27) word -> . ALPHANUMERIC
+    (28) word -> . ALPHANUMERIC word
+    (29) word -> . PUNCTUATION
+    (30) word -> . PUNCTUATION word
 
-    NEWLINE         shift and go to state 22
+    FLOOR           shift and go to state 37
+    ALPHANUMERIC    shift and go to state 19
+    PUNCTUATION     shift and go to state 20
 
+    sentence                       shift and go to state 38
+    word                           shift and go to state 18
 
 state 17
 
-    (14) code -> BACKTICK BACKTICK . BACKTICK sentence BACKTICK BACKTICK BACKTICK
+    (25) urllink -> LEFTBRACKET . sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET
+    (31) sentence -> . word
+    (32) sentence -> . sentence WS word
+    (27) word -> . ALPHANUMERIC
+    (28) word -> . ALPHANUMERIC word
+    (29) word -> . PUNCTUATION
+    (30) word -> . PUNCTUATION word
 
-    BACKTICK        shift and go to state 23
+    ALPHANUMERIC    shift and go to state 19
+    PUNCTUATION     shift and go to state 20
 
+    sentence                       shift and go to state 39
+    word                           shift and go to state 18
 
 state 18
 
-    (7) heading -> HASH sentence NEWLINE .
+    (31) sentence -> word .
 
-    HASH            reduce using rule 7 (heading -> HASH sentence NEWLINE .)
-    GT              reduce using rule 7 (heading -> HASH sentence NEWLINE .)
-    BULLET          reduce using rule 7 (heading -> HASH sentence NEWLINE .)
-    BACKTICK        reduce using rule 7 (heading -> HASH sentence NEWLINE .)
-    $end            reduce using rule 7 (heading -> HASH sentence NEWLINE .)
+    NEWLINE         reduce using rule 31 (sentence -> word .)
+    WS              reduce using rule 31 (sentence -> word .)
+    BULLET          reduce using rule 31 (sentence -> word .)
+    FLOOR           reduce using rule 31 (sentence -> word .)
+    RIGHTBRACKET    reduce using rule 31 (sentence -> word .)
+    RIGHTMBRACKET   reduce using rule 31 (sentence -> word .)
 
 
 state 19
 
-    (13) sentence -> word WS . sentence
-    (12) sentence -> . word
-    (13) sentence -> . word WS sentence
-    (10) word -> . ALPHANUMERIC
-    (11) word -> . ALPHANUMERIC word
+    (27) word -> ALPHANUMERIC .
+    (28) word -> ALPHANUMERIC . word
+    (27) word -> . ALPHANUMERIC
+    (28) word -> . ALPHANUMERIC word
+    (29) word -> . PUNCTUATION
+    (30) word -> . PUNCTUATION word
 
-    ALPHANUMERIC    shift and go to state 14
+    NEWLINE         reduce using rule 27 (word -> ALPHANUMERIC .)
+    WS              reduce using rule 27 (word -> ALPHANUMERIC .)
+    BULLET          reduce using rule 27 (word -> ALPHANUMERIC .)
+    FLOOR           reduce using rule 27 (word -> ALPHANUMERIC .)
+    RIGHTBRACKET    reduce using rule 27 (word -> ALPHANUMERIC .)
+    RIGHTMBRACKET   reduce using rule 27 (word -> ALPHANUMERIC .)
+    ALPHANUMERIC    shift and go to state 19
+    PUNCTUATION     shift and go to state 20
 
-    word                           shift and go to state 13
-    sentence                       shift and go to state 24
+    word                           shift and go to state 40
 
 state 20
 
-    (11) word -> ALPHANUMERIC word .
+    (29) word -> PUNCTUATION .
+    (30) word -> PUNCTUATION . word
+    (27) word -> . ALPHANUMERIC
+    (28) word -> . ALPHANUMERIC word
+    (29) word -> . PUNCTUATION
+    (30) word -> . PUNCTUATION word
 
-    WS              reduce using rule 11 (word -> ALPHANUMERIC word .)
-    NEWLINE         reduce using rule 11 (word -> ALPHANUMERIC word .)
-    BACKTICK        reduce using rule 11 (word -> ALPHANUMERIC word .)
+    NEWLINE         reduce using rule 29 (word -> PUNCTUATION .)
+    WS              reduce using rule 29 (word -> PUNCTUATION .)
+    BULLET          reduce using rule 29 (word -> PUNCTUATION .)
+    FLOOR           reduce using rule 29 (word -> PUNCTUATION .)
+    RIGHTBRACKET    reduce using rule 29 (word -> PUNCTUATION .)
+    RIGHTMBRACKET   reduce using rule 29 (word -> PUNCTUATION .)
+    ALPHANUMERIC    shift and go to state 19
+    PUNCTUATION     shift and go to state 20
 
+    word                           shift and go to state 41
 
 state 21
 
-    (9) quote -> GT sentence NEWLINE .
+    (2) document -> document block .
 
-    HASH            reduce using rule 9 (quote -> GT sentence NEWLINE .)
-    GT              reduce using rule 9 (quote -> GT sentence NEWLINE .)
-    BULLET          reduce using rule 9 (quote -> GT sentence NEWLINE .)
-    BACKTICK        reduce using rule 9 (quote -> GT sentence NEWLINE .)
-    $end            reduce using rule 9 (quote -> GT sentence NEWLINE .)
+    HASH            reduce using rule 2 (document -> document block .)
+    GT              reduce using rule 2 (document -> document block .)
+    BULLET          reduce using rule 2 (document -> document block .)
+    BACKTICK        reduce using rule 2 (document -> document block .)
+    FLOOR           reduce using rule 2 (document -> document block .)
+    LEFTBRACKET     reduce using rule 2 (document -> document block .)
+    ALPHANUMERIC    reduce using rule 2 (document -> document block .)
+    PUNCTUATION     reduce using rule 2 (document -> document block .)
+    $end            reduce using rule 2 (document -> document block .)
 
 
 state 22
 
-    (8) bulletitem -> BULLET sentence NEWLINE .
+    (11) block -> heading NEWLINE .
 
-    HASH            reduce using rule 8 (bulletitem -> BULLET sentence NEWLINE .)
-    GT              reduce using rule 8 (bulletitem -> BULLET sentence NEWLINE .)
-    BULLET          reduce using rule 8 (bulletitem -> BULLET sentence NEWLINE .)
-    BACKTICK        reduce using rule 8 (bulletitem -> BULLET sentence NEWLINE .)
-    $end            reduce using rule 8 (bulletitem -> BULLET sentence NEWLINE .)
+    HASH            reduce using rule 11 (block -> heading NEWLINE .)
+    GT              reduce using rule 11 (block -> heading NEWLINE .)
+    BULLET          reduce using rule 11 (block -> heading NEWLINE .)
+    BACKTICK        reduce using rule 11 (block -> heading NEWLINE .)
+    FLOOR           reduce using rule 11 (block -> heading NEWLINE .)
+    LEFTBRACKET     reduce using rule 11 (block -> heading NEWLINE .)
+    ALPHANUMERIC    reduce using rule 11 (block -> heading NEWLINE .)
+    PUNCTUATION     reduce using rule 11 (block -> heading NEWLINE .)
+    $end            reduce using rule 11 (block -> heading NEWLINE .)
 
 
 state 23
 
-    (14) code -> BACKTICK BACKTICK BACKTICK . sentence BACKTICK BACKTICK BACKTICK
-    (12) sentence -> . word
-    (13) sentence -> . word WS sentence
-    (10) word -> . ALPHANUMERIC
-    (11) word -> . ALPHANUMERIC word
+    (12) block -> quote NEWLINE .
 
-    ALPHANUMERIC    shift and go to state 14
+    HASH            reduce using rule 12 (block -> quote NEWLINE .)
+    GT              reduce using rule 12 (block -> quote NEWLINE .)
+    BULLET          reduce using rule 12 (block -> quote NEWLINE .)
+    BACKTICK        reduce using rule 12 (block -> quote NEWLINE .)
+    FLOOR           reduce using rule 12 (block -> quote NEWLINE .)
+    LEFTBRACKET     reduce using rule 12 (block -> quote NEWLINE .)
+    ALPHANUMERIC    reduce using rule 12 (block -> quote NEWLINE .)
+    PUNCTUATION     reduce using rule 12 (block -> quote NEWLINE .)
+    $end            reduce using rule 12 (block -> quote NEWLINE .)
 
-    sentence                       shift and go to state 25
-    word                           shift and go to state 13
 
 state 24
 
-    (13) sentence -> word WS sentence .
+    (13) block -> bulletitem NEWLINE .
 
-    NEWLINE         reduce using rule 13 (sentence -> word WS sentence .)
-    BACKTICK        reduce using rule 13 (sentence -> word WS sentence .)
+    HASH            reduce using rule 13 (block -> bulletitem NEWLINE .)
+    GT              reduce using rule 13 (block -> bulletitem NEWLINE .)
+    BULLET          reduce using rule 13 (block -> bulletitem NEWLINE .)
+    BACKTICK        reduce using rule 13 (block -> bulletitem NEWLINE .)
+    FLOOR           reduce using rule 13 (block -> bulletitem NEWLINE .)
+    LEFTBRACKET     reduce using rule 13 (block -> bulletitem NEWLINE .)
+    ALPHANUMERIC    reduce using rule 13 (block -> bulletitem NEWLINE .)
+    PUNCTUATION     reduce using rule 13 (block -> bulletitem NEWLINE .)
+    $end            reduce using rule 13 (block -> bulletitem NEWLINE .)
 
 
 state 25
 
-    (14) code -> BACKTICK BACKTICK BACKTICK sentence . BACKTICK BACKTICK BACKTICK
+    (14) block -> code NEWLINE .
 
-    BACKTICK        shift and go to state 26
+    HASH            reduce using rule 14 (block -> code NEWLINE .)
+    GT              reduce using rule 14 (block -> code NEWLINE .)
+    BULLET          reduce using rule 14 (block -> code NEWLINE .)
+    BACKTICK        reduce using rule 14 (block -> code NEWLINE .)
+    FLOOR           reduce using rule 14 (block -> code NEWLINE .)
+    LEFTBRACKET     reduce using rule 14 (block -> code NEWLINE .)
+    ALPHANUMERIC    reduce using rule 14 (block -> code NEWLINE .)
+    PUNCTUATION     reduce using rule 14 (block -> code NEWLINE .)
+    $end            reduce using rule 14 (block -> code NEWLINE .)
 
 
 state 26
 
-    (14) code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK . BACKTICK BACKTICK
+    (15) block -> paragraph NEWLINE .
 
-    BACKTICK        shift and go to state 27
+    HASH            reduce using rule 15 (block -> paragraph NEWLINE .)
+    GT              reduce using rule 15 (block -> paragraph NEWLINE .)
+    BULLET          reduce using rule 15 (block -> paragraph NEWLINE .)
+    BACKTICK        reduce using rule 15 (block -> paragraph NEWLINE .)
+    FLOOR           reduce using rule 15 (block -> paragraph NEWLINE .)
+    LEFTBRACKET     reduce using rule 15 (block -> paragraph NEWLINE .)
+    ALPHANUMERIC    reduce using rule 15 (block -> paragraph NEWLINE .)
+    PUNCTUATION     reduce using rule 15 (block -> paragraph NEWLINE .)
+    $end            reduce using rule 15 (block -> paragraph NEWLINE .)
 
 
 state 27
 
-    (14) code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK . BACKTICK
+    (16) block -> bolditem NEWLINE .
 
-    BACKTICK        shift and go to state 28
+    HASH            reduce using rule 16 (block -> bolditem NEWLINE .)
+    GT              reduce using rule 16 (block -> bolditem NEWLINE .)
+    BULLET          reduce using rule 16 (block -> bolditem NEWLINE .)
+    BACKTICK        reduce using rule 16 (block -> bolditem NEWLINE .)
+    FLOOR           reduce using rule 16 (block -> bolditem NEWLINE .)
+    LEFTBRACKET     reduce using rule 16 (block -> bolditem NEWLINE .)
+    ALPHANUMERIC    reduce using rule 16 (block -> bolditem NEWLINE .)
+    PUNCTUATION     reduce using rule 16 (block -> bolditem NEWLINE .)
+    $end            reduce using rule 16 (block -> bolditem NEWLINE .)
 
 
 state 28
 
-    (14) code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK .
+    (17) block -> italicitem NEWLINE .
 
-    HASH            reduce using rule 14 (code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK .)
-    GT              reduce using rule 14 (code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK .)
-    BULLET          reduce using rule 14 (code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK .)
-    BACKTICK        reduce using rule 14 (code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK .)
-    $end            reduce using rule 14 (code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK .)
+    HASH            reduce using rule 17 (block -> italicitem NEWLINE .)
+    GT              reduce using rule 17 (block -> italicitem NEWLINE .)
+    BULLET          reduce using rule 17 (block -> italicitem NEWLINE .)
+    BACKTICK        reduce using rule 17 (block -> italicitem NEWLINE .)
+    FLOOR           reduce using rule 17 (block -> italicitem NEWLINE .)
+    LEFTBRACKET     reduce using rule 17 (block -> italicitem NEWLINE .)
+    ALPHANUMERIC    reduce using rule 17 (block -> italicitem NEWLINE .)
+    PUNCTUATION     reduce using rule 17 (block -> italicitem NEWLINE .)
+    $end            reduce using rule 17 (block -> italicitem NEWLINE .)
 
+
+state 29
+
+    (18) block -> urllink NEWLINE .
+
+    HASH            reduce using rule 18 (block -> urllink NEWLINE .)
+    GT              reduce using rule 18 (block -> urllink NEWLINE .)
+    BULLET          reduce using rule 18 (block -> urllink NEWLINE .)
+    BACKTICK        reduce using rule 18 (block -> urllink NEWLINE .)
+    FLOOR           reduce using rule 18 (block -> urllink NEWLINE .)
+    LEFTBRACKET     reduce using rule 18 (block -> urllink NEWLINE .)
+    ALPHANUMERIC    reduce using rule 18 (block -> urllink NEWLINE .)
+    PUNCTUATION     reduce using rule 18 (block -> urllink NEWLINE .)
+    $end            reduce using rule 18 (block -> urllink NEWLINE .)
+
+
+state 30
+
+    (19) heading -> HASH sentence . NEWLINE
+    (32) sentence -> sentence . WS word
+
+    NEWLINE         shift and go to state 42
+    WS              shift and go to state 32
+
+
+state 31
+
+    (33) paragraph -> sentence NEWLINE .
+    (34) paragraph -> sentence NEWLINE . paragraph
+    (33) paragraph -> . sentence NEWLINE
+    (34) paragraph -> . sentence NEWLINE paragraph
+    (31) sentence -> . word
+    (32) sentence -> . sentence WS word
+    (27) word -> . ALPHANUMERIC
+    (28) word -> . ALPHANUMERIC word
+    (29) word -> . PUNCTUATION
+    (30) word -> . PUNCTUATION word
+
+  ! shift/reduce conflict for ALPHANUMERIC resolved as shift
+  ! shift/reduce conflict for PUNCTUATION resolved as shift
+    NEWLINE         reduce using rule 33 (paragraph -> sentence NEWLINE .)
+    HASH            reduce using rule 33 (paragraph -> sentence NEWLINE .)
+    GT              reduce using rule 33 (paragraph -> sentence NEWLINE .)
+    BULLET          reduce using rule 33 (paragraph -> sentence NEWLINE .)
+    BACKTICK        reduce using rule 33 (paragraph -> sentence NEWLINE .)
+    FLOOR           reduce using rule 33 (paragraph -> sentence NEWLINE .)
+    LEFTBRACKET     reduce using rule 33 (paragraph -> sentence NEWLINE .)
+    $end            reduce using rule 33 (paragraph -> sentence NEWLINE .)
+    ALPHANUMERIC    shift and go to state 19
+    PUNCTUATION     shift and go to state 20
+
+  ! ALPHANUMERIC    [ reduce using rule 33 (paragraph -> sentence NEWLINE .) ]
+  ! PUNCTUATION     [ reduce using rule 33 (paragraph -> sentence NEWLINE .) ]
+
+    sentence                       shift and go to state 12
+    paragraph                      shift and go to state 43
+    word                           shift and go to state 18
+
+state 32
+
+    (32) sentence -> sentence WS . word
+    (27) word -> . ALPHANUMERIC
+    (28) word -> . ALPHANUMERIC word
+    (29) word -> . PUNCTUATION
+    (30) word -> . PUNCTUATION word
+
+    ALPHANUMERIC    shift and go to state 19
+    PUNCTUATION     shift and go to state 20
+
+    word                           shift and go to state 44
+
+state 33
+
+    (26) quote -> GT sentence . NEWLINE
+    (32) sentence -> sentence . WS word
+
+    NEWLINE         shift and go to state 45
+    WS              shift and go to state 32
+
+
+state 34
+
+    (23) italicitem -> BULLET BULLET . sentence BULLET BULLET
+    (31) sentence -> . word
+    (32) sentence -> . sentence WS word
+    (27) word -> . ALPHANUMERIC
+    (28) word -> . ALPHANUMERIC word
+    (29) word -> . PUNCTUATION
+    (30) word -> . PUNCTUATION word
+
+    ALPHANUMERIC    shift and go to state 19
+    PUNCTUATION     shift and go to state 20
+
+    sentence                       shift and go to state 46
+    word                           shift and go to state 18
+
+state 35
+
+    (20) bulletitem -> BULLET sentence . NEWLINE
+    (21) bolditem -> BULLET sentence . BULLET
+    (32) sentence -> sentence . WS word
+
+    NEWLINE         shift and go to state 48
+    BULLET          shift and go to state 47
+    WS              shift and go to state 32
+
+
+state 36
+
+    (35) code -> BACKTICK BACKTICK . BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK
+
+    BACKTICK        shift and go to state 49
+
+
+state 37
+
+    (24) italicitem -> FLOOR FLOOR . sentence FLOOR FLOOR
+    (31) sentence -> . word
+    (32) sentence -> . sentence WS word
+    (27) word -> . ALPHANUMERIC
+    (28) word -> . ALPHANUMERIC word
+    (29) word -> . PUNCTUATION
+    (30) word -> . PUNCTUATION word
+
+    ALPHANUMERIC    shift and go to state 19
+    PUNCTUATION     shift and go to state 20
+
+    sentence                       shift and go to state 50
+    word                           shift and go to state 18
+
+state 38
+
+    (22) bolditem -> FLOOR sentence . FLOOR
+    (32) sentence -> sentence . WS word
+
+    FLOOR           shift and go to state 51
+    WS              shift and go to state 32
+
+
+state 39
+
+    (25) urllink -> LEFTBRACKET sentence . RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET
+    (32) sentence -> sentence . WS word
+
+    RIGHTBRACKET    shift and go to state 52
+    WS              shift and go to state 32
+
+
+state 40
+
+    (28) word -> ALPHANUMERIC word .
+
+    NEWLINE         reduce using rule 28 (word -> ALPHANUMERIC word .)
+    WS              reduce using rule 28 (word -> ALPHANUMERIC word .)
+    BULLET          reduce using rule 28 (word -> ALPHANUMERIC word .)
+    FLOOR           reduce using rule 28 (word -> ALPHANUMERIC word .)
+    RIGHTBRACKET    reduce using rule 28 (word -> ALPHANUMERIC word .)
+    RIGHTMBRACKET   reduce using rule 28 (word -> ALPHANUMERIC word .)
+
+
+state 41
+
+    (30) word -> PUNCTUATION word .
+
+    NEWLINE         reduce using rule 30 (word -> PUNCTUATION word .)
+    WS              reduce using rule 30 (word -> PUNCTUATION word .)
+    BULLET          reduce using rule 30 (word -> PUNCTUATION word .)
+    FLOOR           reduce using rule 30 (word -> PUNCTUATION word .)
+    RIGHTBRACKET    reduce using rule 30 (word -> PUNCTUATION word .)
+    RIGHTMBRACKET   reduce using rule 30 (word -> PUNCTUATION word .)
+
+
+state 42
+
+    (19) heading -> HASH sentence NEWLINE .
+
+    NEWLINE         reduce using rule 19 (heading -> HASH sentence NEWLINE .)
+    HASH            reduce using rule 19 (heading -> HASH sentence NEWLINE .)
+    GT              reduce using rule 19 (heading -> HASH sentence NEWLINE .)
+    BULLET          reduce using rule 19 (heading -> HASH sentence NEWLINE .)
+    BACKTICK        reduce using rule 19 (heading -> HASH sentence NEWLINE .)
+    FLOOR           reduce using rule 19 (heading -> HASH sentence NEWLINE .)
+    LEFTBRACKET     reduce using rule 19 (heading -> HASH sentence NEWLINE .)
+    ALPHANUMERIC    reduce using rule 19 (heading -> HASH sentence NEWLINE .)
+    PUNCTUATION     reduce using rule 19 (heading -> HASH sentence NEWLINE .)
+    $end            reduce using rule 19 (heading -> HASH sentence NEWLINE .)
+
+
+state 43
+
+    (34) paragraph -> sentence NEWLINE paragraph .
+
+    NEWLINE         reduce using rule 34 (paragraph -> sentence NEWLINE paragraph .)
+    HASH            reduce using rule 34 (paragraph -> sentence NEWLINE paragraph .)
+    GT              reduce using rule 34 (paragraph -> sentence NEWLINE paragraph .)
+    BULLET          reduce using rule 34 (paragraph -> sentence NEWLINE paragraph .)
+    BACKTICK        reduce using rule 34 (paragraph -> sentence NEWLINE paragraph .)
+    FLOOR           reduce using rule 34 (paragraph -> sentence NEWLINE paragraph .)
+    LEFTBRACKET     reduce using rule 34 (paragraph -> sentence NEWLINE paragraph .)
+    ALPHANUMERIC    reduce using rule 34 (paragraph -> sentence NEWLINE paragraph .)
+    PUNCTUATION     reduce using rule 34 (paragraph -> sentence NEWLINE paragraph .)
+    $end            reduce using rule 34 (paragraph -> sentence NEWLINE paragraph .)
+
+
+state 44
+
+    (32) sentence -> sentence WS word .
+
+    NEWLINE         reduce using rule 32 (sentence -> sentence WS word .)
+    WS              reduce using rule 32 (sentence -> sentence WS word .)
+    BULLET          reduce using rule 32 (sentence -> sentence WS word .)
+    FLOOR           reduce using rule 32 (sentence -> sentence WS word .)
+    RIGHTBRACKET    reduce using rule 32 (sentence -> sentence WS word .)
+    RIGHTMBRACKET   reduce using rule 32 (sentence -> sentence WS word .)
+
+
+state 45
+
+    (26) quote -> GT sentence NEWLINE .
+
+    NEWLINE         reduce using rule 26 (quote -> GT sentence NEWLINE .)
+    HASH            reduce using rule 26 (quote -> GT sentence NEWLINE .)
+    GT              reduce using rule 26 (quote -> GT sentence NEWLINE .)
+    BULLET          reduce using rule 26 (quote -> GT sentence NEWLINE .)
+    BACKTICK        reduce using rule 26 (quote -> GT sentence NEWLINE .)
+    FLOOR           reduce using rule 26 (quote -> GT sentence NEWLINE .)
+    LEFTBRACKET     reduce using rule 26 (quote -> GT sentence NEWLINE .)
+    ALPHANUMERIC    reduce using rule 26 (quote -> GT sentence NEWLINE .)
+    PUNCTUATION     reduce using rule 26 (quote -> GT sentence NEWLINE .)
+    $end            reduce using rule 26 (quote -> GT sentence NEWLINE .)
+
+
+state 46
+
+    (23) italicitem -> BULLET BULLET sentence . BULLET BULLET
+    (32) sentence -> sentence . WS word
+
+    BULLET          shift and go to state 53
+    WS              shift and go to state 32
+
+
+state 47
+
+    (21) bolditem -> BULLET sentence BULLET .
+
+    NEWLINE         reduce using rule 21 (bolditem -> BULLET sentence BULLET .)
+    HASH            reduce using rule 21 (bolditem -> BULLET sentence BULLET .)
+    GT              reduce using rule 21 (bolditem -> BULLET sentence BULLET .)
+    BULLET          reduce using rule 21 (bolditem -> BULLET sentence BULLET .)
+    BACKTICK        reduce using rule 21 (bolditem -> BULLET sentence BULLET .)
+    FLOOR           reduce using rule 21 (bolditem -> BULLET sentence BULLET .)
+    LEFTBRACKET     reduce using rule 21 (bolditem -> BULLET sentence BULLET .)
+    ALPHANUMERIC    reduce using rule 21 (bolditem -> BULLET sentence BULLET .)
+    PUNCTUATION     reduce using rule 21 (bolditem -> BULLET sentence BULLET .)
+    $end            reduce using rule 21 (bolditem -> BULLET sentence BULLET .)
+
+
+state 48
+
+    (20) bulletitem -> BULLET sentence NEWLINE .
+
+    NEWLINE         reduce using rule 20 (bulletitem -> BULLET sentence NEWLINE .)
+    HASH            reduce using rule 20 (bulletitem -> BULLET sentence NEWLINE .)
+    GT              reduce using rule 20 (bulletitem -> BULLET sentence NEWLINE .)
+    BULLET          reduce using rule 20 (bulletitem -> BULLET sentence NEWLINE .)
+    BACKTICK        reduce using rule 20 (bulletitem -> BULLET sentence NEWLINE .)
+    FLOOR           reduce using rule 20 (bulletitem -> BULLET sentence NEWLINE .)
+    LEFTBRACKET     reduce using rule 20 (bulletitem -> BULLET sentence NEWLINE .)
+    ALPHANUMERIC    reduce using rule 20 (bulletitem -> BULLET sentence NEWLINE .)
+    PUNCTUATION     reduce using rule 20 (bulletitem -> BULLET sentence NEWLINE .)
+    $end            reduce using rule 20 (bulletitem -> BULLET sentence NEWLINE .)
+
+
+state 49
+
+    (35) code -> BACKTICK BACKTICK BACKTICK . NEWLINE paragraph BACKTICK BACKTICK BACKTICK
+
+    NEWLINE         shift and go to state 54
+
+
+state 50
+
+    (24) italicitem -> FLOOR FLOOR sentence . FLOOR FLOOR
+    (32) sentence -> sentence . WS word
+
+    FLOOR           shift and go to state 55
+    WS              shift and go to state 32
+
+
+state 51
+
+    (22) bolditem -> FLOOR sentence FLOOR .
+
+    NEWLINE         reduce using rule 22 (bolditem -> FLOOR sentence FLOOR .)
+    HASH            reduce using rule 22 (bolditem -> FLOOR sentence FLOOR .)
+    GT              reduce using rule 22 (bolditem -> FLOOR sentence FLOOR .)
+    BULLET          reduce using rule 22 (bolditem -> FLOOR sentence FLOOR .)
+    BACKTICK        reduce using rule 22 (bolditem -> FLOOR sentence FLOOR .)
+    FLOOR           reduce using rule 22 (bolditem -> FLOOR sentence FLOOR .)
+    LEFTBRACKET     reduce using rule 22 (bolditem -> FLOOR sentence FLOOR .)
+    ALPHANUMERIC    reduce using rule 22 (bolditem -> FLOOR sentence FLOOR .)
+    PUNCTUATION     reduce using rule 22 (bolditem -> FLOOR sentence FLOOR .)
+    $end            reduce using rule 22 (bolditem -> FLOOR sentence FLOOR .)
+
+
+state 52
+
+    (25) urllink -> LEFTBRACKET sentence RIGHTBRACKET . LEFTMBRACKET sentence RIGHTMBRACKET
+
+    LEFTMBRACKET    shift and go to state 56
+
+
+state 53
+
+    (23) italicitem -> BULLET BULLET sentence BULLET . BULLET
+
+    BULLET          shift and go to state 57
+
+
+state 54
+
+    (35) code -> BACKTICK BACKTICK BACKTICK NEWLINE . paragraph BACKTICK BACKTICK BACKTICK
+    (33) paragraph -> . sentence NEWLINE
+    (34) paragraph -> . sentence NEWLINE paragraph
+    (31) sentence -> . word
+    (32) sentence -> . sentence WS word
+    (27) word -> . ALPHANUMERIC
+    (28) word -> . ALPHANUMERIC word
+    (29) word -> . PUNCTUATION
+    (30) word -> . PUNCTUATION word
+
+    ALPHANUMERIC    shift and go to state 19
+    PUNCTUATION     shift and go to state 20
+
+    paragraph                      shift and go to state 58
+    sentence                       shift and go to state 12
+    word                           shift and go to state 18
+
+state 55
+
+    (24) italicitem -> FLOOR FLOOR sentence FLOOR . FLOOR
+
+    FLOOR           shift and go to state 59
+
+
+state 56
+
+    (25) urllink -> LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET . sentence RIGHTMBRACKET
+    (31) sentence -> . word
+    (32) sentence -> . sentence WS word
+    (27) word -> . ALPHANUMERIC
+    (28) word -> . ALPHANUMERIC word
+    (29) word -> . PUNCTUATION
+    (30) word -> . PUNCTUATION word
+
+    ALPHANUMERIC    shift and go to state 19
+    PUNCTUATION     shift and go to state 20
+
+    sentence                       shift and go to state 60
+    word                           shift and go to state 18
+
+state 57
+
+    (23) italicitem -> BULLET BULLET sentence BULLET BULLET .
+
+    NEWLINE         reduce using rule 23 (italicitem -> BULLET BULLET sentence BULLET BULLET .)
+    HASH            reduce using rule 23 (italicitem -> BULLET BULLET sentence BULLET BULLET .)
+    GT              reduce using rule 23 (italicitem -> BULLET BULLET sentence BULLET BULLET .)
+    BULLET          reduce using rule 23 (italicitem -> BULLET BULLET sentence BULLET BULLET .)
+    BACKTICK        reduce using rule 23 (italicitem -> BULLET BULLET sentence BULLET BULLET .)
+    FLOOR           reduce using rule 23 (italicitem -> BULLET BULLET sentence BULLET BULLET .)
+    LEFTBRACKET     reduce using rule 23 (italicitem -> BULLET BULLET sentence BULLET BULLET .)
+    ALPHANUMERIC    reduce using rule 23 (italicitem -> BULLET BULLET sentence BULLET BULLET .)
+    PUNCTUATION     reduce using rule 23 (italicitem -> BULLET BULLET sentence BULLET BULLET .)
+    $end            reduce using rule 23 (italicitem -> BULLET BULLET sentence BULLET BULLET .)
+
+
+state 58
+
+    (35) code -> BACKTICK BACKTICK BACKTICK NEWLINE paragraph . BACKTICK BACKTICK BACKTICK
+
+    BACKTICK        shift and go to state 61
+
+
+state 59
+
+    (24) italicitem -> FLOOR FLOOR sentence FLOOR FLOOR .
+
+    NEWLINE         reduce using rule 24 (italicitem -> FLOOR FLOOR sentence FLOOR FLOOR .)
+    HASH            reduce using rule 24 (italicitem -> FLOOR FLOOR sentence FLOOR FLOOR .)
+    GT              reduce using rule 24 (italicitem -> FLOOR FLOOR sentence FLOOR FLOOR .)
+    BULLET          reduce using rule 24 (italicitem -> FLOOR FLOOR sentence FLOOR FLOOR .)
+    BACKTICK        reduce using rule 24 (italicitem -> FLOOR FLOOR sentence FLOOR FLOOR .)
+    FLOOR           reduce using rule 24 (italicitem -> FLOOR FLOOR sentence FLOOR FLOOR .)
+    LEFTBRACKET     reduce using rule 24 (italicitem -> FLOOR FLOOR sentence FLOOR FLOOR .)
+    ALPHANUMERIC    reduce using rule 24 (italicitem -> FLOOR FLOOR sentence FLOOR FLOOR .)
+    PUNCTUATION     reduce using rule 24 (italicitem -> FLOOR FLOOR sentence FLOOR FLOOR .)
+    $end            reduce using rule 24 (italicitem -> FLOOR FLOOR sentence FLOOR FLOOR .)
+
+
+state 60
+
+    (25) urllink -> LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence . RIGHTMBRACKET
+    (32) sentence -> sentence . WS word
+
+    RIGHTMBRACKET   shift and go to state 62
+    WS              shift and go to state 32
+
+
+state 61
+
+    (35) code -> BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK . BACKTICK BACKTICK
+
+    BACKTICK        shift and go to state 63
+
+
+state 62
+
+    (25) urllink -> LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET .
+
+    NEWLINE         reduce using rule 25 (urllink -> LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET .)
+    HASH            reduce using rule 25 (urllink -> LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET .)
+    GT              reduce using rule 25 (urllink -> LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET .)
+    BULLET          reduce using rule 25 (urllink -> LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET .)
+    BACKTICK        reduce using rule 25 (urllink -> LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET .)
+    FLOOR           reduce using rule 25 (urllink -> LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET .)
+    LEFTBRACKET     reduce using rule 25 (urllink -> LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET .)
+    ALPHANUMERIC    reduce using rule 25 (urllink -> LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET .)
+    PUNCTUATION     reduce using rule 25 (urllink -> LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET .)
+    $end            reduce using rule 25 (urllink -> LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET .)
+
+
+state 63
+
+    (35) code -> BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK . BACKTICK
+
+    BACKTICK        shift and go to state 64
+
+
+state 64
+
+    (35) code -> BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK .
+
+    NEWLINE         reduce using rule 35 (code -> BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK .)
+    HASH            reduce using rule 35 (code -> BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK .)
+    GT              reduce using rule 35 (code -> BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK .)
+    BULLET          reduce using rule 35 (code -> BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK .)
+    BACKTICK        reduce using rule 35 (code -> BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK .)
+    FLOOR           reduce using rule 35 (code -> BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK .)
+    LEFTBRACKET     reduce using rule 35 (code -> BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK .)
+    ALPHANUMERIC    reduce using rule 35 (code -> BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK .)
+    PUNCTUATION     reduce using rule 35 (code -> BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK .)
+    $end            reduce using rule 35 (code -> BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for ALPHANUMERIC in state 31 resolved as shift
+WARNING: shift/reduce conflict for PUNCTUATION in state 31 resolved as shift

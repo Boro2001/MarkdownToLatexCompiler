@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'ALPHANUMERIC BACKTICK BULLET GT HASH LITERALCHAR NEWLINE PIPE PUNCTUATION SLASH WSdocument : block\n                | block document\n    block : heading\n    | quote\n    | bulletitem\n    | code\n    \n    heading : HASH sentence NEWLINE\n    \n    bulletitem : BULLET sentence NEWLINE\n    \n    quote : GT sentence NEWLINE\n    \n        word : ALPHANUMERIC\n            | ALPHANUMERIC word\n    \n    sentence : word\n    | word WS sentence\n    \n    code : BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK\n    '
+_lr_signature = 'ALPHANUMERIC BACKTICK BULLET FLOOR GT HASH LEFTBRACKET LEFTMBRACKET LITERALCHAR NEWLINE PIPE PUNCTUATION RIGHTBRACKET RIGHTMBRACKET SLASH WSdocument : block\n                | document block\n    \n    block : heading\n    | quote\n    | bulletitem\n    | code\n    | paragraph\n    | bolditem\n    | italicitem\n    | urllink\n    | heading NEWLINE\n    | quote NEWLINE\n    | bulletitem NEWLINE\n    | code NEWLINE\n    | paragraph NEWLINE\n    | bolditem NEWLINE\n    | italicitem NEWLINE\n    | urllink NEWLINE\n    \n    heading : HASH sentence NEWLINE\n    \n    bulletitem : BULLET sentence NEWLINE\n    \n    bolditem : BULLET sentence BULLET\n    | FLOOR sentence FLOOR\n    \n    italicitem : BULLET BULLET sentence BULLET BULLET\n    | FLOOR FLOOR sentence FLOOR FLOOR\n    \n    urllink : LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET\n    \n    quote : GT sentence NEWLINE\n    \n        word : ALPHANUMERIC\n            | ALPHANUMERIC word\n            | PUNCTUATION\n            | PUNCTUATION word\n    \n    sentence : word\n    | sentence WS word\n    \n    paragraph : sentence NEWLINE\n    | sentence NEWLINE paragraph\n    \n    code : BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK\n    '
     
-_lr_action_items = {'HASH':([0,2,3,4,5,6,18,21,22,28,],[7,7,-3,-4,-5,-6,-7,-9,-8,-14,]),'GT':([0,2,3,4,5,6,18,21,22,28,],[8,8,-3,-4,-5,-6,-7,-9,-8,-14,]),'BULLET':([0,2,3,4,5,6,18,21,22,28,],[9,9,-3,-4,-5,-6,-7,-9,-8,-14,]),'BACKTICK':([0,2,3,4,5,6,10,13,14,17,18,20,21,22,24,25,26,27,28,],[10,10,-3,-4,-5,-6,17,-12,-10,23,-7,-11,-9,-8,-13,26,27,28,-14,]),'$end':([1,2,3,4,5,6,11,18,21,22,28,],[0,-1,-3,-4,-5,-6,-2,-7,-9,-8,-14,]),'ALPHANUMERIC':([7,8,9,14,19,23,],[14,14,14,14,14,14,]),'NEWLINE':([12,13,14,15,16,20,24,],[18,-12,-10,21,22,-11,-13,]),'WS':([13,14,20,],[19,-10,-11,]),}
+_lr_action_items = {'HASH':([0,1,2,3,4,5,6,7,8,9,10,21,22,23,24,25,26,27,28,29,31,42,43,45,47,48,51,57,59,62,64,],[11,11,-1,-3,-4,-5,-6,-7,-8,-9,-10,-2,-11,-12,-13,-14,-15,-16,-17,-18,-33,-19,-34,-26,-21,-20,-22,-23,-24,-25,-35,]),'GT':([0,1,2,3,4,5,6,7,8,9,10,21,22,23,24,25,26,27,28,29,31,42,43,45,47,48,51,57,59,62,64,],[13,13,-1,-3,-4,-5,-6,-7,-8,-9,-10,-2,-11,-12,-13,-14,-15,-16,-17,-18,-33,-19,-34,-26,-21,-20,-22,-23,-24,-25,-35,]),'BULLET':([0,1,2,3,4,5,6,7,8,9,10,14,18,19,20,21,22,23,24,25,26,27,28,29,31,35,40,41,42,43,44,45,46,47,48,51,53,57,59,62,64,],[14,14,-1,-3,-4,-5,-6,-7,-8,-9,-10,34,-31,-27,-29,-2,-11,-12,-13,-14,-15,-16,-17,-18,-33,47,-28,-30,-19,-34,-32,-26,53,-21,-20,-22,57,-23,-24,-25,-35,]),'BACKTICK':([0,1,2,3,4,5,6,7,8,9,10,15,21,22,23,24,25,26,27,28,29,31,36,42,43,45,47,48,51,57,58,59,61,62,63,64,],[15,15,-1,-3,-4,-5,-6,-7,-8,-9,-10,36,-2,-11,-12,-13,-14,-15,-16,-17,-18,-33,49,-19,-34,-26,-21,-20,-22,-23,61,-24,63,-25,64,-35,]),'FLOOR':([0,1,2,3,4,5,6,7,8,9,10,16,18,19,20,21,22,23,24,25,26,27,28,29,31,38,40,41,42,43,44,45,47,48,50,51,55,57,59,62,64,],[16,16,-1,-3,-4,-5,-6,-7,-8,-9,-10,37,-31,-27,-29,-2,-11,-12,-13,-14,-15,-16,-17,-18,-33,51,-28,-30,-19,-34,-32,-26,-21,-20,55,-22,59,-23,-24,-25,-35,]),'LEFTBRACKET':([0,1,2,3,4,5,6,7,8,9,10,21,22,23,24,25,26,27,28,29,31,42,43,45,47,48,51,57,59,62,64,],[17,17,-1,-3,-4,-5,-6,-7,-8,-9,-10,-2,-11,-12,-13,-14,-15,-16,-17,-18,-33,-19,-34,-26,-21,-20,-22,-23,-24,-25,-35,]),'ALPHANUMERIC':([0,1,2,3,4,5,6,7,8,9,10,11,13,14,16,17,19,20,21,22,23,24,25,26,27,28,29,31,32,34,37,42,43,45,47,48,51,54,56,57,59,62,64,],[19,19,-1,-3,-4,-5,-6,-7,-8,-9,-10,19,19,19,19,19,19,19,-2,-11,-12,-13,-14,-15,-16,-17,-18,19,19,19,19,-19,-34,-26,-21,-20,-22,19,19,-23,-24,-25,-35,]),'PUNCTUATION':([0,1,2,3,4,5,6,7,8,9,10,11,13,14,16,17,19,20,21,22,23,24,25,26,27,28,29,31,32,34,37,42,43,45,47,48,51,54,56,57,59,62,64,],[20,20,-1,-3,-4,-5,-6,-7,-8,-9,-10,20,20,20,20,20,20,20,-2,-11,-12,-13,-14,-15,-16,-17,-18,20,20,20,20,-19,-34,-26,-21,-20,-22,20,20,-23,-24,-25,-35,]),'$end':([1,2,3,4,5,6,7,8,9,10,21,22,23,24,25,26,27,28,29,31,42,43,45,47,48,51,57,59,62,64,],[0,-1,-3,-4,-5,-6,-7,-8,-9,-10,-2,-11,-12,-13,-14,-15,-16,-17,-18,-33,-19,-34,-26,-21,-20,-22,-23,-24,-25,-35,]),'NEWLINE':([3,4,5,6,7,8,9,10,12,18,19,20,30,31,33,35,40,41,42,43,44,45,47,48,49,51,57,59,62,64,],[22,23,24,25,26,27,28,29,31,-31,-27,-29,42,-33,45,48,-28,-30,-19,-34,-32,-26,-21,-20,54,-22,-23,-24,-25,-35,]),'WS':([12,18,19,20,30,33,35,38,39,40,41,44,46,50,60,],[32,-31,-27,-29,32,32,32,32,32,-28,-30,-32,32,32,32,]),'RIGHTBRACKET':([18,19,20,39,40,41,44,],[-31,-27,-29,52,-28,-30,-32,]),'RIGHTMBRACKET':([18,19,20,40,41,44,60,],[-31,-27,-29,-28,-30,-32,62,]),'LEFTMBRACKET':([52,],[56,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'document':([0,2,],[1,11,]),'block':([0,2,],[2,2,]),'heading':([0,2,],[3,3,]),'quote':([0,2,],[4,4,]),'bulletitem':([0,2,],[5,5,]),'code':([0,2,],[6,6,]),'sentence':([7,8,9,19,23,],[12,15,16,24,25,]),'word':([7,8,9,14,19,23,],[13,13,13,20,13,13,]),}
+_lr_goto_items = {'document':([0,],[1,]),'block':([0,1,],[2,21,]),'heading':([0,1,],[3,3,]),'quote':([0,1,],[4,4,]),'bulletitem':([0,1,],[5,5,]),'code':([0,1,],[6,6,]),'paragraph':([0,1,31,54,],[7,7,43,58,]),'bolditem':([0,1,],[8,8,]),'italicitem':([0,1,],[9,9,]),'urllink':([0,1,],[10,10,]),'sentence':([0,1,11,13,14,16,17,31,34,37,54,56,],[12,12,30,33,35,38,39,12,46,50,12,60,]),'word':([0,1,11,13,14,16,17,19,20,31,32,34,37,54,56,],[18,18,18,18,18,18,18,40,41,18,44,18,18,18,18,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,18 +27,39 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> document","S'",1,None,None,None),
-  ('document -> block','document',1,'p_document','grammar.py',34),
-  ('document -> block document','document',2,'p_document','grammar.py',35),
-  ('block -> heading','block',1,'p_block','grammar.py',45),
-  ('block -> quote','block',1,'p_block','grammar.py',46),
-  ('block -> bulletitem','block',1,'p_block','grammar.py',47),
-  ('block -> code','block',1,'p_block','grammar.py',48),
-  ('heading -> HASH sentence NEWLINE','heading',3,'p_heading','grammar.py',54),
-  ('bulletitem -> BULLET sentence NEWLINE','bulletitem',3,'p_bulletitem','grammar.py',60),
-  ('quote -> GT sentence NEWLINE','quote',3,'p_quote','grammar.py',66),
-  ('word -> ALPHANUMERIC','word',1,'p_word','grammar.py',72),
-  ('word -> ALPHANUMERIC word','word',2,'p_word','grammar.py',73),
-  ('sentence -> word','sentence',1,'p_sentence','grammar.py',82),
-  ('sentence -> word WS sentence','sentence',3,'p_sentence','grammar.py',83),
-  ('code -> BACKTICK BACKTICK BACKTICK sentence BACKTICK BACKTICK BACKTICK','code',7,'p_code','grammar.py',94),
+  ('document -> block','document',1,'p_document','grammar.py',48),
+  ('document -> document block','document',2,'p_document','grammar.py',49),
+  ('block -> heading','block',1,'p_block','grammar.py',60),
+  ('block -> quote','block',1,'p_block','grammar.py',61),
+  ('block -> bulletitem','block',1,'p_block','grammar.py',62),
+  ('block -> code','block',1,'p_block','grammar.py',63),
+  ('block -> paragraph','block',1,'p_block','grammar.py',64),
+  ('block -> bolditem','block',1,'p_block','grammar.py',65),
+  ('block -> italicitem','block',1,'p_block','grammar.py',66),
+  ('block -> urllink','block',1,'p_block','grammar.py',67),
+  ('block -> heading NEWLINE','block',2,'p_block','grammar.py',68),
+  ('block -> quote NEWLINE','block',2,'p_block','grammar.py',69),
+  ('block -> bulletitem NEWLINE','block',2,'p_block','grammar.py',70),
+  ('block -> code NEWLINE','block',2,'p_block','grammar.py',71),
+  ('block -> paragraph NEWLINE','block',2,'p_block','grammar.py',72),
+  ('block -> bolditem NEWLINE','block',2,'p_block','grammar.py',73),
+  ('block -> italicitem NEWLINE','block',2,'p_block','grammar.py',74),
+  ('block -> urllink NEWLINE','block',2,'p_block','grammar.py',75),
+  ('heading -> HASH sentence NEWLINE','heading',3,'p_heading','grammar.py',81),
+  ('bulletitem -> BULLET sentence NEWLINE','bulletitem',3,'p_bulletitem','grammar.py',87),
+  ('bolditem -> BULLET sentence BULLET','bolditem',3,'p_bolditem','grammar.py',94),
+  ('bolditem -> FLOOR sentence FLOOR','bolditem',3,'p_bolditem','grammar.py',95),
+  ('italicitem -> BULLET BULLET sentence BULLET BULLET','italicitem',5,'p_italicitem','grammar.py',102),
+  ('italicitem -> FLOOR FLOOR sentence FLOOR FLOOR','italicitem',5,'p_italicitem','grammar.py',103),
+  ('urllink -> LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET','urllink',6,'p_urllink','grammar.py',110),
+  ('quote -> GT sentence NEWLINE','quote',3,'p_quote','grammar.py',118),
+  ('word -> ALPHANUMERIC','word',1,'p_word','grammar.py',124),
+  ('word -> ALPHANUMERIC word','word',2,'p_word','grammar.py',125),
+  ('word -> PUNCTUATION','word',1,'p_word','grammar.py',126),
+  ('word -> PUNCTUATION word','word',2,'p_word','grammar.py',127),
+  ('sentence -> word','sentence',1,'p_sentence','grammar.py',136),
+  ('sentence -> sentence WS word','sentence',3,'p_sentence','grammar.py',137),
+  ('paragraph -> sentence NEWLINE','paragraph',2,'p_paragraph','grammar.py',146),
+  ('paragraph -> sentence NEWLINE paragraph','paragraph',3,'p_paragraph','grammar.py',147),
+  ('code -> BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK','code',8,'p_code','grammar.py',155),
 ]
