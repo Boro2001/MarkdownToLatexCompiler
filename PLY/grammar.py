@@ -73,6 +73,8 @@ def p_block(p):
     | bolditem NEWLINE
     | italicitem NEWLINE
     | urllink NEWLINE
+    | enumeratedlist NEWLINE
+    | list NEWLINE
     """
     p[0] = p[1]
 
@@ -104,14 +106,44 @@ def p_italicitem(p):
     """
     p[0] = "\\textit{" + p[3] + "}"
 
+def p_listelement(p):
+    """
+    listelement : PUNCTUATION WS sentence NEWLINE
+    """
+    p[0] = "\\item " + p[3] + "\n"
+
+def p_enumeratedlistelement(p):
+    """
+    enumeratedlistelement :  ALPHANUMERIC PUNCTUATION WS sentence NEWLINE
+    """
+    p[0] = "\\item " +  p[4] + "\n"
+
+def p_list(p):
+    """
+    list : listelement
+    | list listelement
+    """
+    try:
+        p[0] = "\\begin{itemize}\n" + p[1][16:-14] + p[2] + "\\end{itemize}\n"
+    except:
+        p[0] = "\\begin{itemize}\n" + p[1] + "\\end{itemize}\n"
+        
+def p_enumeratedlist(p):
+    """
+    enumeratedlist : enumeratedlistelement
+                    | enumeratedlist enumeratedlistelement
+    """
+    try:
+        p[0] = "\\begin{enumerate}\n" + p[1][18:-16] + p[2] + "\\end{enumerate}\n"
+    except:
+        p[0] = "\\begin{enumerate}\n" + p[1] + "\\end{enumerate}\n"
+
 
 def p_urllink(p):
     """
     urllink : LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET
     """
     p[0] = "\\href{" + p[5] + "}{" + p[2] + "}"
-
-
 
 def p_quote(p):
     """
@@ -148,8 +180,6 @@ def p_paragraph(p):
     """
     p[0] = "\\paragraph{" + p[1] + "}\n"
 
-
-
 def p_code(p):
     """
     code : BACKTICK BACKTICK BACKTICK NEWLINE paragraph BACKTICK BACKTICK BACKTICK
@@ -160,10 +190,19 @@ def p_code(p):
 # /GRAMMAR
 data = """[link do internetu](http://www.overleaf.com)
 ala ma kota
-
 kot ma ale
+
 #heading
 ostatnia linia
+
+1. pierwszy element
+2. drugi element
+3. trzeci element
+
+- pierwszy element
+- drugi element
+- trzeci element
+
 """
 
 # lexowanie
