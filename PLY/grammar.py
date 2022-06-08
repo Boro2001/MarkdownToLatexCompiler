@@ -55,7 +55,7 @@ def p_document(p):
     elif len(p) == 3:
         p[0] =  p[1][:-14] + p[2] + "\\end{document}"
     else:
-        print("Document wrong argument lenght")
+        print("Document wrong argument length")
 
 def p_block(p):
     """
@@ -156,9 +156,9 @@ def p_enumeratedlist(p):
 
 def p_urllink(p):
     """
-    urllink : LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET
+    urllink : LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET NEWLINE
     """
-    p[0] = "\\href{" + p[5] + "}{" + p[2] + "}"
+    p[0] = "\\href{" + p[5] + "}{" + p[2] + "}\n"
 
 def p_quote(p):
     """
@@ -318,3 +318,11 @@ if not s:
     pass
 result = parser.parse(s)
 print(result)
+
+print("ENDDD")
+
+def get_parser():
+    parser2 = yacc.yacc()
+    return parser2
+
+
