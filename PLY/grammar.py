@@ -237,38 +237,3 @@ def get_parser():
     return parser2
 
 
-# convert .md file to pdf using miktex
-def convert_to_pdf(filename):
-    import os
-    import platform
-    import subprocess
-
-
-    # TeX source filename
-    md_filename = filename
-    filename, ext = os.path.splitext(md_filename)
-    # the corresponding PDF filename
-    tex_filename = filename + '.tex'
-    pdf_filename = filename + '.pdf'
-
-    with open(md_filename) as f:
-        lines = f.read()
-
-    parser = yacc.yacc()
-    result = parser.parse(lines)
-
-    result = """\\documentclass{article}
-\\usepackage[utf8]{inputenc}
-\\usepackage{hyperref}
-""" + result
-
-    with open(tex_filename, 'w') as f:
-        f.write(result)
-
-
-
-    command = "pdflatex " + tex_filename
-    subprocess.call(command)
-
-
-#convert_to_pdf("test345.md")
