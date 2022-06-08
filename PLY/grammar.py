@@ -18,8 +18,8 @@ tokens = (
     'LEFTBRACKET',  # [
     'RIGHTBRACKET',  # ]
     'LEFTMBRACKET',  # {
-    'RIGHTMBRACKET',  # }
-    'MINUS')
+    'RIGHTMBRACKET'  # }
+    )
 
 t_NEWLINE = r'\n'
 t_BACKTICK = r'`'
@@ -28,7 +28,7 @@ t_HASH = r'\#'
 t_PIPE = r'\|'
 t_SLASH = r'\\'
 t_ALPHANUMERIC = r'[a-zA-Z0-9]'
-t_PUNCTUATION = r'[!"$%&,./:;<=?@^{}]'
+t_PUNCTUATION = r'[!"$%&,./:;\-<=?@^{}]'
 t_WS = r'\ '
 t_BULLET = r'\*'
 t_LITERALCHAR = r'\''
@@ -37,7 +37,7 @@ t_LEFTBRACKET = r'\['
 t_RIGHTBRACKET = r'\]'
 t_LEFTMBRACKET = r'\('
 t_RIGHTMBRACKET = r'\)'
-t_MINUS = r'\-'
+
 # /TOKENS
 
 
@@ -51,7 +51,7 @@ def p_document(p):
                 | document block
     """
     if len(p) == 2:
-        p[0] = """\\documentclass{article}\\usepackage[utf8]{inputenc}\\usepackage{hyperref}\\begin{document}\\newenvironment{amazingtabular}{\\begin{tabular}{*{30}{|l}}}{\\end{tabular}}\n""" + p[1] + "\\end{document}"
+        p[0] = """\\documentclass{article}\\usepackage{array, makecell}\\usepackage[utf8]{inputenc}\\usepackage{hyperref}\\begin{document}\\newenvironment{amazingtabular}{\\begin{tabular}{*{30}{|l}}}{\\end{tabular}}\n""" + p[1] + "\\end{document}"
     elif len(p) == 3:
         p[0] =  p[1][:-14] + p[2] + "\\end{document}"
     else:
@@ -215,42 +215,46 @@ def p_tablerow(p):
 def p_table(p):
     """
     table : table tablerow
-    | tablerow 
+    | tablerow
     """
     try:
+        x = p[2]
         p[0] = p[1][:-21] + p[2] + "\\end{amazingtabular}\n"
+        delimeter = True
+        for letter in p[2][:-11]:
+            if letter not in " -&":
+                delimeter = False
+        if delimeter:
+            p[0] = p[1]
     except:
+
         elems = p[1].split("&")
-        elems[-1] = elems[-1][:-9]
+        elems[-1] = elems[-1][:-10]
         for i in range(len(elems)):
             elems[i] = "\\thead{" + elems[i] + "}"
         out = str.join("&", elems)
-        out = out + "\\\\ \hline"
+        p[0] = "\\begin{amazingtabular}\\hline" + out + "\\\\ \hline\\end{amazingtabular}\n" # uncommed this later
 
-        print("---------------------------")        
-        p[0] = "\\begin{amazingtabular}" + "\\hline\n" + p[1] + "\\end{amazingtabular}\n"
-        #p[0] = "\\begin{amazingtabular}" + out + "\\end{amazingtabular}\n" # uncommed this later
-        print("---------------------------")
-
-def p_minusline(p):
-    """
-    minusline : MINUS
-    """
-    p[0] = ""
-    
+# def p_minusline(p):
+#     """
+#     minusline : MINUS
+#     """
+#     p[0] = ""
+#
 def p_pipeline(p):
     """
     pipeline : PIPE PIPE
     | pipeline PIPE
     """
     p[0] = "\\hline\n"
+
 # def tabledelimeter(p):
 #     """
 #     tabledelimeter : PIPE tabledelimetercell
 #     tabledelimeter : tabledelimeter tabledelimetercell
 #     """
 #     p[0] = "\\hline\n"
-
+#
 # def tabledelimetercell(p):
 #     """
 #     tabledelimetercell : MINUS PIPE
@@ -259,12 +263,14 @@ def p_pipeline(p):
 #     p[0] = ""
 
 # /GRAMMAR
-dadffta = """|pierwszylement|
+
+
+data = """|pierwszy|drugi|trzeci|
+|---|---|---|
+|323|fdf33 fd|fdf3 3 3|
+|dsd lskds l|d sldkhjhjhj hjs dls|d hj hj hkslkl|
 """
-
-
-
-data = """[link do internetu](http://www.overleaf.com)
+"""[link do internetu](http://www.overleaf.com)
 ala ma kota
 kot ma ale
 
@@ -280,12 +286,7 @@ ostatnia linia
 - pierwszy element
 - drugi element
 - trzeci element
-
-|pierwszy|drugi|trzeci|
-|---|---|---|
-|1|2|3|
 """
-
 
 
 def p_error(p):
