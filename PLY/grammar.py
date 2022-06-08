@@ -19,9 +19,10 @@ tokens = (
     'LEFTBRACKET',  # [
     'RIGHTBRACKET',  # ]
     'LEFTMBRACKET',  # {
-    'RIGHTMBRACKET'  # }
-)
-t_NEWLINE = r'\n'
+    'RIGHTMBRACKET',  # }
+    'MINUS')
+
+_NEWLINE = r'\n'
 t_BACKTICK = r'`'
 t_GT = r'>'
 t_HASH = r'\#'
@@ -29,6 +30,7 @@ t_PIPE = r'\|'
 t_SLASH = r'\\'
 t_ALPHANUMERIC = r'[a-zA-Z0-9]'
 t_PUNCTUATION = r'[!"$%&,-./:;<=?@^{}]'
+
 t_WS = r'\ '
 t_BULLET = r'\*'
 t_LITERALCHAR = r'\''
@@ -39,6 +41,7 @@ t_LEFTMBRACKET = r'\('
 t_RIGHTMBRACKET = r'\)'
 # /TOKENS
 
+t_MINUS = r'\-'
 def t_error(t):
     print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
@@ -49,9 +52,9 @@ def p_document(p):
                 | document block
     """
     if len(p) == 2:
-        p[0] = "\\begin{document}" + p[1] + "\\end{document}"
+        p[0] = "\\begin{document}\n" + p[1] + "\\end{document}"
     elif len(p) == 3:
-        p[0] = "\\begin{document}" + p[1][16:-14] + p[2] + "\\end{document}"
+        p[0] = "\\begin{document}\n" + p[1][17:-14] + p[2] + "\\end{document}"
     else:
         print("Document wrong argument lenght")
 
@@ -75,6 +78,7 @@ def p_block(p):
     | urllink NEWLINE
     | enumeratedlist NEWLINE
     | list NEWLINE
+    | table
     """
     p[0] = p[1]
 
@@ -186,9 +190,49 @@ def p_code(p):
     """
     p[0] = "\\begin{code}\n" + p[5] + "\\end{code}\n"
 
+def p_tablerow(p):
+    """
+    tablerow : PIPE sentence PIPE NEWLINE
+    | PIPE sentence tablerow  
+    """ 
+    if(len(p)==5):
+        p[0] = " " + p[3] + "\\ \hline\n"
+    else:
+        p[0] = " " + p[3] + " & "
+    
+
+
+# def tabledelimeter(p):
+#     """
+#     tabledelimeter : PIPE tabledelimetercell
+#     tabledelimeter : tabledelimeter tabledelimetercell
+#     """
+#     p[0] = 
+
+# def tabledelimetercell(p):
+#     """
+#     tabledelimetercell : MINUS PIPE
+#     tabledelimetercell : MINUS tabledelimetercell
+#     """
+#     p[0] = p[1] + p[2]
+
+
+
+
+def p_table(p):
+    """
+    table : tablerow 
+    | tablerow table
+    """
+    p[0] = "\newenvironment{amazingtabular}{\begin{tabular}{*{30}{|l}}}{\end{tabular}}\\begin{amazingtabular}\\hline\n" + p[1] + "\\end{amazingtabular}\n"
 
 # /GRAMMAR
-data = """[link do internetu](http://www.overleaf.com)
+data = """|pierwszylement|
+"""
+
+
+
+fdsd = """[link do internetu](http://www.overleaf.com)
 ala ma kota
 kot ma ale
 
@@ -202,10 +246,22 @@ ostatnia linia
 - pierwszy element
 - drugi element
 - trzeci element
+ 
+|pierwszy element|
 
 """
 
-# lexowanie
+
+
+def p_error(p):
+
+    # get formatted representation of stack
+    stack_state_str = ' '.join([symbol.type for symbol in parser.symstack][1:])
+
+    print('Syntax error in input! Parser State:{} {} . {}'
+          .format(parser.state,
+                  stack_state_str,
+                  p))# lexowanie
 lexer = lex.lex()
 lexer.input(data)
 while True:
