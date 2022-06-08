@@ -49,11 +49,14 @@ def p_document(p):
                 | document block
     """
     if len(p) == 2:
-        p[0] = "\\begin{document}" + p[1] + "\\end{document}"
+        p[0] = """\\documentclass{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage{hyperref}
+\\begin{document}""" + p[1] + "\\end{document}"
     elif len(p) == 3:
-        p[0] = "\\begin{document}" + p[1][16:-14] + p[2] + "\\end{document}"
+        p[0] = p[1][:-14] + p[2] + "\\end{document}"
     else:
-        print("Document wrong argument lenght")
+        print("Document wrong argument length")
 
 def p_block(p):
     """
@@ -141,9 +144,9 @@ def p_enumeratedlist(p):
 
 def p_urllink(p):
     """
-    urllink : LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET
+    urllink : LEFTBRACKET sentence RIGHTBRACKET LEFTMBRACKET sentence RIGHTMBRACKET NEWLINE
     """
-    p[0] = "\\href{" + p[5] + "}{" + p[2] + "}"
+    p[0] = "\\href{" + p[5] + "}{" + p[2] + "}\n"
 
 def p_quote(p):
     """
@@ -226,3 +229,46 @@ if not s:
     pass
 result = parser.parse(s)
 print(result)
+
+print("ENDDD")
+
+def get_parser():
+    parser2 = yacc.yacc()
+    return parser2
+
+
+# convert .md file to pdf using miktex
+def convert_to_pdf(filename):
+    import os
+    import platform
+    import subprocess
+
+
+    # TeX source filename
+    md_filename = filename
+    filename, ext = os.path.splitext(md_filename)
+    # the corresponding PDF filename
+    tex_filename = filename + '.tex'
+    pdf_filename = filename + '.pdf'
+
+    with open(md_filename) as f:
+        lines = f.read()
+
+    parser = yacc.yacc()
+    result = parser.parse(lines)
+
+    result = """\\documentclass{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage{hyperref}
+""" + result
+
+    with open(tex_filename, 'w') as f:
+        f.write(result)
+
+
+
+    command = "pdflatex " + tex_filename
+    subprocess.call(command)
+
+
+#convert_to_pdf("test345.md")
