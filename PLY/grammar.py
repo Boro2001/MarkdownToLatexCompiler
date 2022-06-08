@@ -1,7 +1,6 @@
 from ply import yacc
 from ply import lex
 
-
 # TOKENS
 tokens = (
     'NEWLINE', #\n
@@ -20,7 +19,8 @@ tokens = (
     'RIGHTBRACKET',  # ]
     'LEFTMBRACKET',  # {
     'RIGHTMBRACKET'  # }
-)
+    )
+
 t_NEWLINE = r'\n'
 t_BACKTICK = r'`'
 t_GT = r'>'
@@ -28,7 +28,7 @@ t_HASH = r'\#'
 t_PIPE = r'\|'
 t_SLASH = r'\\'
 t_ALPHANUMERIC = r'[a-zA-Z0-9]'
-t_PUNCTUATION = r'[!"$%&,-./:;<=?@^{}]'
+t_PUNCTUATION = r'[!"$%&,./:;\-<=?@^{}]'
 t_WS = r'\ '
 t_BULLET = r'\*'
 t_LITERALCHAR = r'\''
@@ -37,7 +37,9 @@ t_LEFTBRACKET = r'\['
 t_RIGHTBRACKET = r'\]'
 t_LEFTMBRACKET = r'\('
 t_RIGHTMBRACKET = r'\)'
+
 # /TOKENS
+
 
 def t_error(t):
     print("Illegal character '%s'" % t.value[0])
@@ -49,18 +51,17 @@ def p_document(p):
                 | document block
     """
     if len(p) == 2:
-        p[0] = """\\documentclass{article}
-\\usepackage[utf8]{inputenc}
-\\usepackage{hyperref}
-\\begin{document}""" + p[1] + "\\end{document}"
+        p[0] = """\\documentclass{article}\\usepackage{array, makecell}\\usepackage[utf8]{inputenc}\\usepackage{hyperref}\\begin{document}\\newenvironment{amazingtabular}{\\begin{tabular}{*{30}{|l}}}{\\end{tabular}}\n""" + p[1] + "\\end{document}"
     elif len(p) == 3:
-        p[0] = p[1][:-14] + p[2] + "\\end{document}"
+        p[0] =  p[1][:-14] + p[2] + "\\end{document}"
     else:
         print("Document wrong argument length")
 
 def p_block(p):
     """
     block : heading
+    | subheading
+    | subsubheading
     | quote
     | bulletitem
     | code
@@ -78,6 +79,8 @@ def p_block(p):
     | urllink NEWLINE
     | enumeratedlist NEWLINE
     | list NEWLINE
+    | table
+    | pipeline NEWLINE
     """
     p[0] = p[1]
 
@@ -85,7 +88,19 @@ def p_heading(p):
     """
     heading : HASH sentence NEWLINE
     """
-    p[0] = "\\section{" + p[2] + "}\n"
+    p[0] = "\\section*{" + p[2] + "}\n"
+
+def p_subheading(p):
+    """
+    subheading : HASH HASH sentence NEWLINE
+    """
+    p[0] = "\\subsection*{" + p[3] + "}\n"
+
+def p_subsubheading(p):
+    """
+    subsubheading : HASH HASH HASH sentence NEWLINE
+    """
+    p[0] = "\\subsubsection*{" + p[4] + "}\n"
 
 def p_bulletitem(p):
     """
@@ -93,14 +108,12 @@ def p_bulletitem(p):
     """
     p[0] = "\\begin{bulletitem} " + p[2] + "\\end{bulletitem}\n"
 
-
 def p_bolditem(p):
     """
     bolditem : BULLET sentence BULLET
     | FLOOR sentence FLOOR
     """
     p[0] = "\\textbf{" + p[2] + "}"
-
 
 def p_italicitem(p):
     """
@@ -140,7 +153,6 @@ def p_enumeratedlist(p):
         p[0] = "\\begin{enumerate}\n" + p[1][18:-16] + p[2] + "\\end{enumerate}\n"
     except:
         p[0] = "\\begin{enumerate}\n" + p[1] + "\\end{enumerate}\n"
-
 
 def p_urllink(p):
     """
@@ -189,13 +201,82 @@ def p_code(p):
     """
     p[0] = "\\begin{code}\n" + p[5] + "\\end{code}\n"
 
+def p_tablerow(p):
+    """
+    tablerow : PIPE sentence PIPE NEWLINE
+    | PIPE sentence tablerow
+    """ 
+    if(len(p)==5):
+        p[0] = " " + p[2] + "\\\\ \\hline\n"
+    else:
+        p[0] = " " + p[2] + " &" + p[3]
+
+    
+def p_table(p):
+    """
+    table : table tablerow
+    | tablerow
+    """
+    try:
+        x = p[2]
+        p[0] = p[1][:-21] + p[2] + "\\end{amazingtabular}\n"
+        delimeter = True
+        for letter in p[2][:-11]:
+            if letter not in " -&":
+                delimeter = False
+        if delimeter:
+            p[0] = p[1]
+    except:
+
+        elems = p[1].split("&")
+        elems[-1] = elems[-1][:-10]
+        for i in range(len(elems)):
+            elems[i] = "\\thead{" + elems[i] + "}"
+        out = str.join("&", elems)
+        p[0] = "\\begin{amazingtabular}\\hline" + out + "\\\\ \hline\\end{amazingtabular}\n" # uncommed this later
+
+# def p_minusline(p):
+#     """
+#     minusline : MINUS
+#     """
+#     p[0] = ""
+#
+def p_pipeline(p):
+    """
+    pipeline : PIPE PIPE
+    | pipeline PIPE
+    """
+    p[0] = "\\hline\n"
+
+# def tabledelimeter(p):
+#     """
+#     tabledelimeter : PIPE tabledelimetercell
+#     tabledelimeter : tabledelimeter tabledelimetercell
+#     """
+#     p[0] = "\\hline\n"
+#
+# def tabledelimetercell(p):
+#     """
+#     tabledelimetercell : MINUS PIPE
+#     tabledelimetercell : MINUS tabledelimetercell
+#     """
+#     p[0] = ""
 
 # /GRAMMAR
-data = """[link do internetu](http://www.overleaf.com)
+
+
+data = """|pierwszy|drugi|trzeci|
+|---|---|---|
+|323|fdf33 fd|fdf3 3 3|
+|dsd lskds l|d sldkhjhjhj hjs dls|d hj hj hkslkl|
+"""
+"""[link do internetu](http://www.overleaf.com)
 ala ma kota
 kot ma ale
 
 #heading
+##subheading
+###subsubheading
 ostatnia linia
 
 1. pierwszy element
@@ -205,10 +286,18 @@ ostatnia linia
 - pierwszy element
 - drugi element
 - trzeci element
-
 """
 
-# lexowanie
+
+def p_error(p):
+
+    # get formatted representation of stack
+    stack_state_str = ' '.join([symbol.type for symbol in parser.symstack][1:])
+
+    print('Syntax error in input! Parser State:{} {} . {}'
+          .format(parser.state,
+                  stack_state_str,
+                  p))# lexowanie
 lexer = lex.lex()
 lexer.input(data)
 while True:
