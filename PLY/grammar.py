@@ -193,7 +193,11 @@ def p_paragraph(p):
     paragraph : sentence NEWLINE
     | sentence NEWLINE paragraph
     """
-    p[0] = "\\paragraph{" + p[1] + "}\n"
+    try:
+        x = p[3]
+    except:
+        p[0] = p[1] + "\\newline "
+    # p[0] = "\\paragraph{" + p[1] + "}\n"
 
 def p_code(p):
     """
@@ -219,7 +223,7 @@ def p_table(p):
     """
     try:
         x = p[2]
-        p[0] = p[1][:-21] + p[2] + "\\end{amazingtabular}\n"
+        p[0] = p[1][:-30] + p[2] + "\\end{amazingtabular}\n\\newline "
         delimeter = True
         for letter in p[2][:-11]:
             if letter not in " -&":
@@ -233,7 +237,7 @@ def p_table(p):
         for i in range(len(elems)):
             elems[i] = "\\thead{" + elems[i] + "}"
         out = str.join("&", elems)
-        p[0] = "\\begin{amazingtabular}\\hline" + out + "\\\\ \hline\\end{amazingtabular}\n" # uncommed this later
+        p[0] = "\\begin{amazingtabular}\\hline" + out + "\\\\ \hline\\end{amazingtabular}\n\\newline " # uncommed this later
 
 # def p_minusline(p):
 #     """
@@ -265,10 +269,12 @@ def p_pipeline(p):
 # /GRAMMAR
 
 
-data = """|pierwszy|drugi|trzeci|
+data = """ala ma kota
+|pierwszy|drugi|trzeci|
 |---|---|---|
 |323|fdf33 fd|fdf3 3 3|
 |dsd lskds l|d sldkhjhjhj hjs dls|d hj hj hkslkl|
+kot ma ale
 """
 """[link do internetu](http://www.overleaf.com)
 ala ma kota
