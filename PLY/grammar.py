@@ -317,8 +317,7 @@ def p_pipeline(p):
 # /GRAMMAR
 
 
-data = """normal text *bold text* some text __second bold or italic text__  
-new line text
+data = """normal text *bold text* some text __second bold or italic text__
 """
 
 
