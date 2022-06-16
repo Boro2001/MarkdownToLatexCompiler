@@ -207,6 +207,7 @@ def p_paragraph(p):
     | paragraph WS WS NEWLINE sentence
     | paragraph WS WS NEWLINE bolditem
     | paragraph WS WS NEWLINE italicitem
+    | paragraph WS WS NEWLINE
     """
 
 
@@ -317,7 +318,18 @@ def p_pipeline(p):
 # /GRAMMAR
 
 
-data = """normal text *bold text* some text __second bold or italic text__
+data = """normal text *bold text* some text __second bold or italic text__  
+|pierwszy|drugi|trzeci|
+|---|---|---|
+|323|fdf33 fd|fdf3 3 3|
+|dsd lskds l|d sldkhjhjhj hjs dls|d hj hj hkslkl|
+zdanie ostatnie
+#heading
+
+1. pierwszy element
+2. drugi element
+3. trzeci element
+
 """
 
 
