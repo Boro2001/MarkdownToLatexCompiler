@@ -66,21 +66,18 @@ def p_block(p):
     | bulletitem
     | code
     | paragraph
-    | bolditem
-    | italicitem
     | urllink
     | heading NEWLINE
     | quote NEWLINE
     | bulletitem NEWLINE
     | code NEWLINE
     | paragraph NEWLINE
-    | bolditem NEWLINE
-    | italicitem NEWLINE
     | urllink NEWLINE
     | enumeratedlist NEWLINE
     | list NEWLINE
     | table
     | pipeline NEWLINE
+    | table NEWLINE
     """
     p[0] = p[1]
 
@@ -172,6 +169,9 @@ def p_word(p):
             | ALPHANUMERIC word
             | PUNCTUATION
             | PUNCTUATION word
+            | ALPHANUMERIC WS
+            | WS word
+
     """
     try:
         p[0] = p[1] + p[2]
@@ -182,6 +182,7 @@ def p_sentence(p):
     """
     sentence : word
     | sentence WS word
+    | sentence WS
     """
     try:
         p[0] = p[1] + " " + p[3]
@@ -191,12 +192,38 @@ def p_sentence(p):
 def p_paragraph(p):
     """
     paragraph : sentence NEWLINE
+    | sentence
+
+    | paragraph NEWLINE sentence
+    | bolditem NEWLINE
+    | paragraph NEWLINE bolditem
+    | italicitem NEWLINE
+    | paragraph NEWLINE italicitem
+    | paragraph WS sentence
+    | bolditem WS
+    | paragraph WS bolditem
+    | italicitem WS
+    | paragraph WS italicitem
+    """
+
+
+    """
     | sentence NEWLINE paragraph
+    | bolditem NEWLINE
+    | bolditem NEWLINE paragraph
+    | italicitem NEWLINE
+    | italicitem NEWLINE paragraph
+    | sentence WS paragraph
+    | bolditem WS
+    | bolditem WS paragraph
+    | italicitem WS
+    | italicitem WS paragraph
     """
     try:
         x = p[3]
+        p[0] = p[1] + p[3]
     except:
-        p[0] = p[1] + "\\newline "
+        p[0] = p[1] #+ "\\newline "
     # p[0] = "\\paragraph{" + p[1] + "}\n"
 
 def p_code(p):
@@ -269,7 +296,11 @@ def p_pipeline(p):
 # /GRAMMAR
 
 
-data = """ala ma kota
+data = """ala *kot* ma
+"""
+
+
+"""ala ma kota
 |pierwszy|drugi|trzeci|
 |---|---|---|
 |323|fdf33 fd|fdf3 3 3|
