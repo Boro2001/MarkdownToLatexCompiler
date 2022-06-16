@@ -166,11 +166,11 @@ def p_quote(p):
 def p_word(p):
     """
         word : ALPHANUMERIC
-            | ALPHANUMERIC word
+            | word ALPHANUMERIC
             | PUNCTUATION
-            | PUNCTUATION word
+            | word PUNCTUATION
             | ALPHANUMERIC WS
-            | WS word
+            | word WS
 
     """
     try:
@@ -183,6 +183,7 @@ def p_sentence(p):
     sentence : word
     | sentence WS word
     | sentence WS
+
     """
     try:
         p[0] = p[1] + " " + p[3]
@@ -191,40 +192,60 @@ def p_sentence(p):
 
 def p_paragraph(p):
     """
-    paragraph : sentence NEWLINE
-    | sentence
-
+    paragraph : sentence
     | paragraph NEWLINE sentence
-    | bolditem NEWLINE
+    | bolditem
     | paragraph NEWLINE bolditem
-    | italicitem NEWLINE
+    | italicitem
     | paragraph NEWLINE italicitem
     | paragraph WS sentence
-    | bolditem WS
     | paragraph WS bolditem
-    | italicitem WS
     | paragraph WS italicitem
+    | paragraph WS WS sentence
+    | paragraph WS WS bolditem
+    | paragraph WS WS italicitem
+    | paragraph WS WS NEWLINE sentence
+    | paragraph WS WS NEWLINE bolditem
+    | paragraph WS WS NEWLINE italicitem
     """
 
 
-    """
+    if len(p) == 4:
+        p[0] = p[1] + " " + p[3]
+    elif len(p) == 2:
+        p[0] = p[1] #+ "\\newline "
+    elif len(p) == 5:
+        p[0] = p[1] + "\\newline " + p[4]
+    else: # len = 6
+        p[0] = p[1] + "\\newline " + p[5]
+    # p[0] = "\\paragraph{" + p[1] + "}\n"
+"""
+       paragraph : sentence NEWLINE
+       | sentence
+
+       | paragraph NEWLINE sentence
+       | bolditem NEWLINE
+       | paragraph NEWLINE bolditem
+       | italicitem NEWLINE
+       | paragraph NEWLINE italicitem
+       | paragraph WS sentence
+       | bolditem WS
+       | paragraph WS bolditem
+       | italicitem WS
+       | paragraph WS italicitem
+"""
+
+"""
     | sentence NEWLINE paragraph
     | bolditem NEWLINE
     | bolditem NEWLINE paragraph
     | italicitem NEWLINE
     | italicitem NEWLINE paragraph
     | sentence WS paragraph
-    | bolditem WS
     | bolditem WS paragraph
-    | italicitem WS
     | italicitem WS paragraph
-    """
-    try:
-        x = p[3]
-        p[0] = p[1] + p[3]
-    except:
-        p[0] = p[1] #+ "\\newline "
-    # p[0] = "\\paragraph{" + p[1] + "}\n"
+"""
+
 
 def p_code(p):
     """
@@ -296,7 +317,8 @@ def p_pipeline(p):
 # /GRAMMAR
 
 
-data = """ala *kot* ma
+data = """normal text *bold text* some text __second bold or italic text__  
+new line text
 """
 
 
