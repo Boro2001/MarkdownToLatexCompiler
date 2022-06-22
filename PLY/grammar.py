@@ -86,21 +86,21 @@ def p_block(p):
 
 def p_heading(p):
     """
-    heading : HASH sentence NEWLINE
+    heading : HASH WS sentence NEWLINE
     """
-    p[0] = "\\section*{" + p[2] + "}\n"
+    p[0] = "\\section*{" + p[3] + "}\n"
 
 def p_subheading(p):
     """
-    subheading : HASH HASH sentence NEWLINE
+    subheading : HASH HASH WS sentence NEWLINE
     """
-    p[0] = "\\subsection*{" + p[3] + "}\n"
+    p[0] = "\\subsection*{" + p[4] + "}\n"
 
 def p_subsubheading(p):
     """
-    subsubheading : HASH HASH HASH sentence NEWLINE
+    subsubheading : HASH HASH HASH WS sentence NEWLINE
     """
-    p[0] = "\\subsubsection*{" + p[4] + "}\n"
+    p[0] = "\\subsubsection*{" + p[5] + "}\n"
 
 def p_bulletitem(p):
     """
@@ -265,27 +265,10 @@ def p_pipeline(p):
 # /GRAMMAR
 
 
-data = """|pierwszy|drugi|trzeci|
-|---|---|---|
-|323|fdf33 fd|fdf3 3 3|
-|dsd lskds l|d sldkhjhjhj hjs dls|d hj hj hkslkl|
-"""
-"""[link do internetu](http://www.overleaf.com)
-ala ma kota
-kot ma ale
-
-#heading
-##subheading
-###subsubheading
-ostatnia linia
-
-1. pierwszy element
-2. drugi element
-3. trzeci element
-
-- pierwszy element
-- drugi element
-- trzeci element
+data = """#brak spacji w tytule
+_niezamknieta kursywa
+|masa|sila|czas|
+||||
 """
 
 

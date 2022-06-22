@@ -4,7 +4,7 @@ ala ma kota
 
 kot ma ale
 
-#heading
+# heading
 jeszcze jedna linia
 
 1. pierwszy element
@@ -19,4 +19,3 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 **Lorem ipsum dolor sit amet, consectetur adipiscing elit.**
 _Lorem ipsum dolor sit amet, consectetur adipiscing elit._
 >Cytat znanego czlowieka
-
